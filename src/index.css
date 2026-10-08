@@ -4,23 +4,49 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    color-scheme: light;
+    --color-surface: 255 255 255;
+    --color-canvas: 248 250 252;
+    --color-stage: 242 238 228;
+    --color-ink: 15 23 42;
+    --color-muted: 71 85 105;
+    --color-subtle: 100 116 139;
+    --color-line: 226 232 240;
+    --color-primary: 37 99 235;
+    --color-primary-hover: 29 78 216;
+    --color-primary-soft: 239 246 255;
+  }
+  :root.dark {
+    color-scheme: dark;
+    --color-surface: 15 23 42;
+    --color-canvas: 8 15 29;
+    --color-stage: 30 41 59;
+    --color-ink: 241 245 249;
+    --color-muted: 203 213 225;
+    --color-subtle: 148 163 184;
+    --color-line: 51 65 85;
+    --color-primary: 96 165 250;
+    --color-primary-hover: 59 130 246;
+    --color-primary-soft: 30 58 95;
+  }
   * { @apply box-border; }
   html { scroll-behavior: smooth; }
-  body { @apply m-0 bg-white font-sans text-ink antialiased; }
+  body { @apply m-0 bg-surface font-sans text-ink antialiased transition-colors duration-200; }
   button, input, select { font: inherit; }
   button, a { -webkit-tap-highlight-color: transparent; }
-  :focus-visible { @apply outline-none ring-2 ring-primary ring-offset-2; }
+  :focus-visible { @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-surface; }
 }
 
 @layer components {
   .container-page { @apply mx-auto w-full max-w-[1280px] px-6 md:px-10; }
   .eyebrow { @apply text-[11px] font-semibold uppercase tracking-[0.02em] text-primary; }
   .section-title { @apply text-[28px] font-normal leading-[1.15] md:text-[36px]; }
-  .muted-copy { @apply text-sm leading-[1.55] text-slate-600; }
-  .btn { @apply inline-flex h-12 items-center justify-center gap-2 rounded-[10px] px-5 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-500; }
-  .btn-primary { @apply btn bg-primary text-white hover:bg-blue-700; }
-  .btn-outline { @apply btn border border-line bg-white text-primary hover:bg-blue-50; }
-  .card { @apply rounded-2xl border border-line bg-white; }
+  .muted-copy { @apply text-sm leading-[1.55] text-muted; }
+  .btn { @apply inline-flex h-12 items-center justify-center gap-2 rounded-[10px] px-5 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:bg-line disabled:text-subtle; }
+  .btn-primary { @apply btn bg-primary text-white hover:bg-primary-hover; }
+  .btn-outline { @apply btn border border-line bg-surface text-primary hover:bg-primary-soft; }
+  .card { @apply rounded-2xl border border-line bg-surface; }
 }
 
 @media (max-width: 767px) {

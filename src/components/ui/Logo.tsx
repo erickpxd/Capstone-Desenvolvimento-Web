@@ -9,7 +9,7 @@ export function Logo({ compact = false }: { compact?: boolean }) {
       </span>
       <span className="leading-none">
         <strong className={`${compact ? 'text-sm' : 'text-base'} block font-semibold`}>Biblioteca Online</strong>
-        <span className="mt-1 block text-[8px] uppercase tracking-wide text-slate-500">Biblioteca universitária</span>
+        <span className="mt-1 block text-[8px] uppercase tracking-wide text-subtle">Biblioteca universitária</span>
       </span>
     </Link>
   )

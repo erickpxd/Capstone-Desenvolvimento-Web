@@ -11,7 +11,7 @@ export function StatusPill({ status, count = 0, long = false }: { status: Availa
     ? 'bg-emerald-50 text-emerald-700'
     : status === 'borrowed'
       ? 'bg-amber-50 text-amber-800'
-      : 'bg-slate-50 text-slate-600'
+      : 'bg-canvas text-muted'
   const label = long && status === 'borrowed' ? 'Todos os exemplares emprestados' : copy[status](count)
 
   return (

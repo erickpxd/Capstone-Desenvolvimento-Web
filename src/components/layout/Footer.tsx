@@ -5,9 +5,9 @@ import { Logo } from '../ui/Logo'
 export function Footer() {
   return (
     <>
-      <section className="border-y border-line bg-blue-50 py-5">
+      <section className="border-y border-line bg-primary-soft py-5">
         <div className="container-page flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
-          <div className="flex gap-3"><MessageSquare size={20} className="mt-0.5 text-primary" /><div><p className="text-sm font-semibold">Precisa encontrar um livro ou entender uma regra?</p><p className="mt-1 text-xs text-slate-600">Nossa equipe pode orientar sua pesquisa e o uso do acervo físico.</p></div></div>
+          <div className="flex gap-3"><MessageSquare size={20} className="mt-0.5 text-primary" /><div><p className="text-sm font-semibold">Precisa encontrar um livro ou entender uma regra?</p><p className="mt-1 text-xs text-muted">Nossa equipe pode orientar sua pesquisa e o uso do acervo físico.</p></div></div>
           <button className="btn-outline h-10 w-full md:w-auto">Fale com a biblioteca</button>
         </div>
       </section>

@@ -1,14 +1,20 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {
       colors: {
-        ink: '#0F172A',
-        primary: '#2563EB',
-        canvas: '#F8FAFC',
-        line: '#E2E8F0',
-        muted: '#64748B',
+        ink: 'rgb(var(--color-ink) / <alpha-value>)',
+        primary: 'rgb(var(--color-primary) / <alpha-value>)',
+        'primary-hover': 'rgb(var(--color-primary-hover) / <alpha-value>)',
+        'primary-soft': 'rgb(var(--color-primary-soft) / <alpha-value>)',
+        surface: 'rgb(var(--color-surface) / <alpha-value>)',
+        canvas: 'rgb(var(--color-canvas) / <alpha-value>)',
+        stage: 'rgb(var(--color-stage) / <alpha-value>)',
+        line: 'rgb(var(--color-line) / <alpha-value>)',
+        muted: 'rgb(var(--color-muted) / <alpha-value>)',
+        subtle: 'rgb(var(--color-subtle) / <alpha-value>)',
         success: '#10B981',
       },
       fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'] },
