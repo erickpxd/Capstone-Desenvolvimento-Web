@@ -23,6 +23,30 @@ Somente a chave pública/publishable deve ser usada no frontend.
 - `/catalogo` — catálogo público
 - `/livros/:bookId` — detalhes do livro
 - `/entrar` — autenticação institucional
+- `/minha-conta` — área protegida (redireciona visitantes para o login)
+
+## Autenticação
+
+O Supabase Auth executa o login por e-mail e senha. O cliente oficial mantém a sessão no armazenamento do navegador, renova o access token e inclui a autenticação nas chamadas ao Supabase. O `AuthProvider` restaura a sessão ao abrir a aplicação e acompanha login/logout em tempo real. Para endpoints REST próprios, `authenticatedFetch` adiciona explicitamente `Authorization: Bearer <token>`.
+
+No painel do Supabase, cadastre as URLs local e pública em **Authentication → URL Configuration**. Nunca coloque a `service_role` no frontend: use apenas a chave pública/publishable.
+
+## Testes
+
+```bash
+npm test
+npm run test:coverage
+```
+
+A suíte usa Jest e React Testing Library. Ela cobre componentes críticos, o hook de tema, login/logout, envio do token e integração com a Open Library por meio de mocks de `fetch`.
+
+## Produção (Vercel)
+
+1. Importe o repositório na Vercel.
+2. Cadastre `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY` nas variáveis do projeto.
+3. Publique com o preset Vite. O `vercel.json` já define build, diretório `dist` e fallback das rotas da SPA.
+
+Antes de publicar, execute `npm run test:coverage && npm run build`.
 
 ## Dados
 

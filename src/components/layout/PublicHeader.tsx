@@ -1,11 +1,15 @@
-import { LogIn, Menu, UserRound, X } from 'lucide-react'
+import { LogIn, LogOut, Menu, UserRound, X } from 'lucide-react'
 import { useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { useAuth } from '../../features/auth/AuthContext'
 import { Logo } from '../ui/Logo'
 import { ThemeToggle } from '../ui/ThemeToggle'
 
 export function PublicHeader() {
   const [open, setOpen] = useState(false)
+  const { user, signOut } = useAuth()
+  const navigate = useNavigate()
+  async function logout() { await signOut(); navigate('/') }
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-surface/95 backdrop-blur">
       <div className="container-page flex h-[88px] items-center justify-between md:h-20">
@@ -16,12 +20,12 @@ export function PublicHeader() {
           <a className="hover:text-ink" href="/#como-funciona">Como funciona</a>
         </nav>
         <div className="hidden items-center gap-6 text-sm md:flex">
-          <Link to="/entrar" className="inline-flex items-center gap-2 text-ink"><UserRound size={17} />Área do aluno</Link>
+          <Link to={user ? '/minha-conta' : '/entrar'} className="inline-flex items-center gap-2 text-ink"><UserRound size={17} />{user ? 'Minha conta' : 'Área do aluno'}</Link>
           <ThemeToggle />
-          <Link to="/entrar" className="btn-primary h-10"><LogIn size={17} />Entrar</Link>
+          {user ? <button type="button" onClick={logout} className="btn-primary h-10"><LogOut size={17} />Sair</button> : <Link to="/entrar" className="btn-primary h-10"><LogIn size={17} />Entrar</Link>}
         </div>
         <div className="flex items-center gap-4 md:hidden">
-          <Link to="/entrar" aria-label="Área do aluno" className="text-primary"><UserRound size={19} /></Link>
+          <Link to={user ? '/minha-conta' : '/entrar'} aria-label="Área do aluno" className="text-primary"><UserRound size={19} /></Link>
           <ThemeToggle />
           <button onClick={() => setOpen((v) => !v)} aria-expanded={open} aria-label={open ? 'Fechar menu' : 'Abrir menu'}>{open ? <X size={21} /> : <Menu size={21} />}</button>
         </div>
@@ -31,7 +35,7 @@ export function PublicHeader() {
           <Link onClick={() => setOpen(false)} className="block py-2" to="/">Início</Link>
           <Link onClick={() => setOpen(false)} className="block py-2" to="/catalogo">Catálogo</Link>
           <a onClick={() => setOpen(false)} className="block py-2" href="/#como-funciona">Como funciona</a>
-          <Link onClick={() => setOpen(false)} className="mt-2 flex h-11 items-center justify-center rounded-lg bg-primary font-semibold text-white" to="/entrar">Entrar</Link>
+          {user ? <><Link onClick={() => setOpen(false)} className="block py-2" to="/minha-conta">Minha conta</Link><button onClick={() => { setOpen(false); void logout() }} className="mt-2 flex h-11 w-full items-center justify-center rounded-lg bg-primary font-semibold text-white">Sair</button></> : <Link onClick={() => setOpen(false)} className="mt-2 flex h-11 items-center justify-center rounded-lg bg-primary font-semibold text-white" to="/entrar">Entrar</Link>}
         </nav>
       )}
     </header>

@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { type PropsWithChildren, useState } from 'react'
+import { AuthProvider } from '../features/auth/AuthContext'
 import { ThemeProvider } from './theme'
 
 export function AppProviders({ children }: PropsWithChildren) {
@@ -9,5 +10,5 @@ export function AppProviders({ children }: PropsWithChildren) {
     },
   }))
 
-  return <ThemeProvider><QueryClientProvider client={queryClient}>{children}</QueryClientProvider></ThemeProvider>
+  return <ThemeProvider><QueryClientProvider client={queryClient}><AuthProvider>{children}</AuthProvider></QueryClientProvider></ThemeProvider>
 }
