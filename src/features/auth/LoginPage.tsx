@@ -12,7 +12,8 @@ export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
-  const returnTo = (location.state as { returnTo?: string } | null)?.returnTo ?? '/'
+  const requestedPath = (location.state as { returnTo?: string } | null)?.returnTo
+  const returnTo = requestedPath?.startsWith('/') && !requestedPath.startsWith('//') ? requestedPath : '/'
 
   const login = useMutation({
     mutationFn: async () => {
