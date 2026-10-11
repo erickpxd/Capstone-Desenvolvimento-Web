@@ -42,3 +42,16 @@ test('interrompe a chamada protegida quando não há sessão', async () => {
   await expect(authenticatedFetch('/api/emprestimos')).rejects.toThrow('Sessão expirada')
   expect(mockedFetch).not.toHaveBeenCalled()
 })
+
+test('propaga erros de login, logout e leitura da sessão', async () => {
+  const loginError = new Error('login inválido')
+  mockedRequireSupabase.mockReturnValue(authClient({
+    signInWithPassword: jest.fn().mockResolvedValue({ error: loginError }),
+    signOut: jest.fn().mockResolvedValue({ error: new Error('logout falhou') }),
+  }) as never)
+  await expect(signInWithPassword({ email: 'x@example.com', password: 'x' })).rejects.toThrow('login inválido')
+  await expect(signOut()).rejects.toThrow('logout falhou')
+
+  mockedRequireSupabase.mockReturnValue(authClient({ getSession: jest.fn().mockResolvedValue({ data: { session: null }, error: new Error('sessão falhou') }) }) as never)
+  await expect(authenticatedFetch('/api/privado')).rejects.toThrow('sessão falhou')
+})

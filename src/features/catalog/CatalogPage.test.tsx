@@ -45,3 +45,25 @@ test('mostra estado de erro e permite tentar novamente', async () => {
   await user.click(screen.getByRole('button', { name: /tentar novamente/i }))
   expect(mockedSearch).toHaveBeenCalledTimes(2)
 })
+
+test('exercita filtros, limpeza e paginação do catálogo', async () => {
+  mockedSearch.mockResolvedValue({ books: [available, borrowed], total: 25, page: 1, pageSize: 8 })
+  const user = userEvent.setup()
+  renderCatalog()
+  await screen.findByRole('heading', { name: 'Livro disponível' })
+
+  await user.click(screen.getByRole('button', { name: /^filtros$/i }))
+  await user.click(screen.getByLabelText('Design'))
+  await user.click(screen.getByLabelText('Cópias disponíveis'))
+  await user.click(screen.getByLabelText('Todas as situações'))
+  await user.click(screen.getByLabelText('Somente no catálogo'))
+  await user.click(screen.getByLabelText('Português'))
+  await user.click(screen.getByLabelText('Inglês'))
+  await user.click(screen.getByLabelText('Espanhol'))
+  await user.click(screen.getByRole('button', { name: 'Limpar' }))
+
+  await user.click(screen.getByRole('button', { name: '2' }))
+  expect(window.scrollTo).toHaveBeenCalled()
+  await user.click(screen.getByRole('button', { name: 'Página anterior' }))
+  expect(mockedSearch).toHaveBeenCalled()
+})
