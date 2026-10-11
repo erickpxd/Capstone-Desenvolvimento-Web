@@ -13,9 +13,6 @@ module.exports = {
     '!src/test/**',
   ],
   coverageThreshold: {
-    global: { branches: 25, functions: 20, lines: 35, statements: 30 },
-    './src/components/ui/SearchBar.tsx': { lines: 100, statements: 100 },
-    './src/components/books/BookCard.tsx': { lines: 100, statements: 100 },
-    './src/features/auth/LoginPage.tsx': { lines: 100, statements: 90 },
+    global: { branches: 65, functions: 70, lines: 85, statements: 75 },
   },
 }
