@@ -11,7 +11,7 @@ const mockedUseAuth = jest.mocked(useAuth)
 test('apresenta conta autenticada e executa logout no desktop', async () => {
   const user = userEvent.setup()
   const signOut = jest.fn().mockResolvedValue(undefined)
-  mockedUseAuth.mockReturnValue({ user: { email: 'aluno@example.com' } as never, session: {} as never, isLoading: false, signOut })
+  mockedUseAuth.mockReturnValue({ user: { email: 'aluno@example.com' } as never, session: {} as never, isLoading: false, signOut, role: 'student', displayName: 'Aluno' })
   render(<ThemeProvider><MemoryRouter initialEntries={['/catalogo']}><Routes><Route path="*" element={<><PublicHeader /><p>Página</p></>} /></Routes></MemoryRouter></ThemeProvider>)
   expect(screen.getAllByRole('link', { name: /minha conta/i })[0]).toHaveAttribute('href', '/minha-conta')
   await user.click(screen.getAllByRole('button', { name: /^sair$/i })[0])
@@ -21,7 +21,7 @@ test('apresenta conta autenticada e executa logout no desktop', async () => {
 test('fecha o menu móvel ao navegar e permite logout móvel', async () => {
   const user = userEvent.setup()
   const signOut = jest.fn().mockResolvedValue(undefined)
-  mockedUseAuth.mockReturnValue({ user: { email: 'aluno@example.com' } as never, session: {} as never, isLoading: false, signOut })
+  mockedUseAuth.mockReturnValue({ user: { email: 'aluno@example.com' } as never, session: {} as never, isLoading: false, signOut, role: 'student', displayName: 'Aluno' })
   render(<ThemeProvider><MemoryRouter><PublicHeader /></MemoryRouter></ThemeProvider>)
   await user.click(screen.getByRole('button', { name: 'Abrir menu' }))
   await user.click(screen.getAllByRole('button', { name: /^sair$/i })[1])

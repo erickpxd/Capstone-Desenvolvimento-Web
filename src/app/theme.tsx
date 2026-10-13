@@ -19,7 +19,9 @@ function initialTheme(): Theme {
   } catch {
     // O tema continua funcional mesmo quando o navegador bloqueia o armazenamento.
   }
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  // O Figma usa o modo claro como experiência inicial; o modo escuro só é
+  // ativado quando a pessoa escolhe explicitamente pelo alternador.
+  return 'light'
 }
 
 export function ThemeProvider({ children }: PropsWithChildren) {
