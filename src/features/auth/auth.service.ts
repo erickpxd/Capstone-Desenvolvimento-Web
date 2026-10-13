@@ -5,8 +5,38 @@ export interface LoginCredentials {
   password: string
 }
 
+export interface SignUpCredentials extends LoginCredentials {
+  fullName: string
+}
+
 export async function signInWithPassword(credentials: LoginCredentials): Promise<void> {
   const { error } = await requireSupabase().auth.signInWithPassword(credentials)
+  if (error) throw error
+}
+
+export async function signUp({ fullName, email, password }: SignUpCredentials): Promise<{ requiresEmailConfirmation: boolean }> {
+  const { data, error } = await requireSupabase().auth.signUp({
+    email,
+    password,
+    options: { data: { full_name: fullName } },
+  })
+  if (error) throw error
+  return { requiresEmailConfirmation: !data.session }
+}
+
+export async function requestPasswordReset(email: string): Promise<void> {
+  const redirectTo = `${window.location.origin}/recuperar-senha/nova`
+  const { error } = await requireSupabase().auth.resetPasswordForEmail(email, { redirectTo })
+  if (error) throw error
+}
+
+export async function updatePassword(password: string): Promise<void> {
+  const { error } = await requireSupabase().auth.updateUser({ password })
+  if (error) throw error
+}
+
+export async function updateProfile(fullName: string): Promise<void> {
+  const { error } = await requireSupabase().auth.updateUser({ data: { full_name: fullName } })
   if (error) throw error
 }
 

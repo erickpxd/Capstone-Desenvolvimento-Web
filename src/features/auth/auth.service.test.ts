@@ -1,4 +1,4 @@
-import { authenticatedFetch, signInWithPassword, signOut } from './auth.service'
+import { authenticatedFetch, requestPasswordReset, signInWithPassword, signOut, signUp, updatePassword, updateProfile } from './auth.service'
 import { requireSupabase } from '../../lib/supabase'
 
 jest.mock('../../lib/supabase', () => ({ requireSupabase: jest.fn() }))
@@ -9,6 +9,9 @@ global.fetch = mockedFetch
 function authClient(overrides: Record<string, unknown> = {}) {
   return { auth: {
     signInWithPassword: jest.fn().mockResolvedValue({ error: null }),
+    signUp: jest.fn().mockResolvedValue({ data: { session: null }, error: null }),
+    resetPasswordForEmail: jest.fn().mockResolvedValue({ error: null }),
+    updateUser: jest.fn().mockResolvedValue({ error: null }),
     signOut: jest.fn().mockResolvedValue({ error: null }),
     getSession: jest.fn().mockResolvedValue({ data: { session: { access_token: 'token-seguro' } }, error: null }),
     ...overrides,
@@ -27,6 +30,22 @@ test('delega login e logout ao backend de autenticação', async () => {
   await signOut()
   expect(client.auth.signInWithPassword).toHaveBeenCalledWith({ email: 'aluno@example.com', password: 'segredo' })
   expect(client.auth.signOut).toHaveBeenCalledTimes(1)
+})
+
+test('executa cadastro, recuperação e atualizações da conta', async () => {
+  const client = authClient()
+  mockedRequireSupabase.mockReturnValue(client as never)
+
+  await expect(signUp({ fullName: 'Ana Martins', email: 'ana@example.com', password: 'senha123' })).resolves.toEqual({ requiresEmailConfirmation: true })
+  expect(client.auth.signUp).toHaveBeenCalledWith({ email: 'ana@example.com', password: 'senha123', options: { data: { full_name: 'Ana Martins' } } })
+
+  await requestPasswordReset('ana@example.com')
+  expect(client.auth.resetPasswordForEmail).toHaveBeenCalledWith('ana@example.com', { redirectTo: expect.stringContaining('/recuperar-senha/nova') })
+
+  await updatePassword('novaSenha123')
+  await updateProfile('Ana Lima')
+  expect(client.auth.updateUser).toHaveBeenNthCalledWith(1, { password: 'novaSenha123' })
+  expect(client.auth.updateUser).toHaveBeenNthCalledWith(2, { data: { full_name: 'Ana Lima' } })
 })
 
 test('envia o access token no cabeçalho de uma API protegida', async () => {

@@ -8,6 +8,8 @@ interface AuthContextValue {
   session: Session | null
   isLoading: boolean
   signOut: () => Promise<void>
+  role: 'student' | 'admin'
+  displayName: string
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -45,6 +47,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
     session,
     isLoading,
     signOut: requestSignOut,
+    role: session?.user?.app_metadata?.role === 'admin' ? 'admin' : 'student',
+    displayName: session?.user?.user_metadata?.full_name || session?.user?.email?.split('@')[0] || 'Ana Martins',
   }), [isLoading, session])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
