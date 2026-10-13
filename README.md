@@ -23,7 +23,12 @@ Somente a chave pública/publishable deve ser usada no frontend.
 - `/catalogo` — catálogo público
 - `/livros/:bookId` — detalhes do livro
 - `/entrar` — autenticação institucional
-- `/minha-conta` — área protegida (redireciona visitantes para o login)
+- `/cadastro` — criação de conta institucional
+- `/recuperar-senha` e `/recuperar-senha/nova` — solicitação e definição de nova senha
+- `/minha-conta` — painel do aluno protegido
+- `/minha-conta/emprestimos`, `/reservas`, `/desejos`, `/leituras` e `/perfil` — área do aluno
+- `/admin` — painel administrativo protegido por papel de acesso
+- `/admin/acervo`, `/exemplares`, `/emprestimos`, `/reservas`, `/estudantes`, `/relatorios` e `/configuracoes` — gestão administrativa
 
 ## Autenticação
 
@@ -33,10 +38,10 @@ No painel do Supabase, cadastre as URLs local e pública em **Authentication →
 
 ### Fluxo de integração e autenticação
 
-1. O formulário de `/entrar` envia e-mail e senha para `signInWithPassword`, que delega a validação ao Supabase Auth.
+1. Cadastro, login, recuperação e alteração de senha usam diretamente o Supabase Auth.
 2. Após o login, o SDK persiste a sessão no navegador e renova o access token automaticamente.
 3. O `AuthProvider` restaura a sessão na inicialização e acompanha as mudanças emitidas por `onAuthStateChange`.
-4. O `ProtectedRoute` impede o acesso anônimo a `/minha-conta` e preserva a rota de retorno para depois do login.
+4. O `ProtectedRoute` impede acesso anônimo, preserva a rota de retorno e exige `role: "admin"` para a área administrativa.
 5. Requisições para endpoints REST protegidos podem usar `authenticatedFetch`, que obtém a sessão atual e envia `Authorization: Bearer <token>`.
 6. O logout chama o backend do Supabase, encerra a sessão local e devolve o usuário à área pública.
 
@@ -72,12 +77,16 @@ O `vercel.json` já registra o build, o diretório `dist` e o fallback necessár
 
 Antes de publicar, execute `npm run test:coverage && npm run build`.
 
-## Dados
+## Dados e limites desta etapa
 
 O catálogo e os detalhes consultam a Open Library em tempo real. Disponibilidade e exemplares físicos continuam em mocks tipados em `src/mocks/books.ts`, vinculados por `openLibraryKey`; uma obra externa sem vínculo aparece como “Só no catálogo”. Esses domínios permanecem separados e nenhum resultado da Open Library é gravado automaticamente no Supabase.
 
+As páginas de aluno e administração reproduzem os estados demonstrativos do Figma. Nome, senha, cadastro, recuperação e sessão já usam o Supabase Auth. Empréstimos, reservas, lista de desejos, progresso de leitura, estudantes, exemplares e políticas administrativas ainda não persistem porque as tabelas e regras RLS não foram criadas — nenhuma migration remota foi executada.
+
+Para liberar um administrador, defina `app_metadata.role` como `admin` por um ambiente seguro (Edge Function ou servidor com chave privilegiada). Nunca permita que o próprio navegador atribua esse papel. A checagem de rota melhora a experiência, mas a autorização real também deve existir nas políticas RLS.
+
 ## Tema visual
 
-O alternador no cabeçalho escolhe entre os modos claro e noturno e salva a preferência no navegador. Sem uma escolha anterior, o tema inicial acompanha a preferência do sistema operacional.
+O alternador no cabeçalho escolhe entre os modos claro e noturno e salva a preferência no navegador. Sem uma escolha anterior, o tema inicial é claro, conforme o Figma.
 
 As telas devem usar os tokens semânticos do Tailwind (`surface`, `canvas`, `ink`, `muted`, `line`, `primary` e seus derivados), definidos em `src/index.css` e `tailwind.config.js`. Isso permite que componentes novos funcionem nos dois temas sem manter CSS separado por dispositivo ou duplicar componentes.
