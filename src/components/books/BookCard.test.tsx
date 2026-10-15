@@ -48,4 +48,5 @@ test('mantém títulos longos dentro da capa ilustrativa', () => {
 
   expect(title).toHaveClass('overflow-hidden', 'break-words', 'text-[11px]', 'max-h-[58px]')
   expect(title).toHaveAttribute('title', longTitle)
+  expect(cover).toHaveClass('w-[126px]', 'p-3')
 })

@@ -13,11 +13,11 @@ export function BookCover({ book, large = false }: { book: Book; large?: boolean
   const [failedUrl, setFailedUrl] = useState<string | null>(null)
   const images = art[book.cover]
   const dimensions = large ? 'h-[290px] w-[200px]' : 'h-[182px] w-[126px]'
+  const padding = large ? 'p-5' : 'p-3'
   const titleLength = book.title.trim().length
   const titleSize = large
     ? titleLength > 55 ? 'text-[17px]' : titleLength > 34 ? 'text-[21px]' : 'text-[27px]'
     : titleLength > 45 ? 'text-[11px]' : titleLength > 30 ? 'text-[14px]' : 'text-[18px]'
-  const titleLines = large || titleLength > 45 ? 5 : 4
   const titleHeight = large ? 'max-h-[142px]' : titleLength > 45 ? 'max-h-[58px]' : 'max-h-[76px]'
 
   if (book.coverImageUrl && failedUrl !== book.coverImageUrl) {
@@ -26,7 +26,7 @@ export function BookCover({ book, large = false }: { book: Book; large?: boolean
 
   return (
     <div
-      className={`relative flex shrink-0 flex-col justify-between overflow-hidden rounded-[3px] p-[10%] shadow-book ${dimensions}`}
+      className={`relative flex shrink-0 flex-col justify-between overflow-hidden rounded-[3px] shadow-book ${dimensions} ${padding}`}
       style={{ backgroundColor: book.coverColor, color: book.coverInk }}
       aria-label={`Capa ilustrativa de ${book.title}`}
     >
@@ -36,12 +36,7 @@ export function BookCover({ book, large = false }: { book: Book; large?: boolean
         {images ? <><img src={images[0]} alt="" className="absolute size-[75%]" /><img src={images[1]} alt="" className="absolute size-[55%]" /></> : <Bars type={book.cover} />}
       </span>
       <strong
-        className={`${titleSize} ${titleHeight} shrink-0 overflow-hidden break-words font-semibold leading-[1.05]`}
-        style={{
-          display: '-webkit-box',
-          WebkitBoxOrient: 'vertical',
-          WebkitLineClamp: titleLines,
-        }}
+        className={`${titleSize} ${titleHeight} block w-full shrink-0 overflow-hidden break-words font-semibold leading-[1.05]`}
         title={book.title}
       >
         {book.title}
