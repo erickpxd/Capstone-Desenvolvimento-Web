@@ -1,9 +1,11 @@
-import { LogIn, LogOut, Menu, UserRound, X } from 'lucide-react'
+import { LogIn, Menu, UserRound, X } from 'lucide-react'
 import { useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../features/auth/AuthContext'
 import { Logo } from '../ui/Logo'
 import { ThemeToggle } from '../ui/ThemeToggle'
+import { AuthenticatedUserMenu } from './AuthenticatedUserMenu'
+import { AccountNavigation } from './AccountNavigation'
 
 export function PublicHeader() {
   const [open, setOpen] = useState(false)
@@ -19,10 +21,8 @@ export function PublicHeader() {
           <NavLink className={({ isActive }) => isActive ? 'text-primary' : 'hover:text-ink'} to="/catalogo">Catálogo</NavLink>
           <a className="hover:text-ink" href="/#como-funciona">Como funciona</a>
         </nav>
-        <div className="hidden items-center gap-6 text-sm md:flex">
-          <Link to={user ? '/minha-conta' : '/entrar'} className="inline-flex items-center gap-2 text-ink"><UserRound size={17} />{user ? 'Minha conta' : 'Área do aluno'}</Link>
-          <ThemeToggle />
-          {user ? <button type="button" onClick={logout} className="btn-primary h-10"><LogOut size={17} />Sair</button> : <Link to="/entrar" className="btn-primary h-10"><LogIn size={17} />Entrar</Link>}
+        <div className="hidden items-center gap-4 text-sm md:flex">
+          {user ? <><ThemeToggle /><AuthenticatedUserMenu /></> : <><Link to="/entrar" className="inline-flex items-center gap-2 text-ink"><UserRound size={17} />Área do aluno</Link><ThemeToggle /><Link to="/entrar" className="btn-primary h-10"><LogIn size={17} />Entrar</Link></>}
         </div>
         <div className="flex items-center gap-4 md:hidden">
           <Link to={user ? '/minha-conta' : '/entrar'} aria-label="Área do aluno" className="text-primary"><UserRound size={19} /></Link>
@@ -30,6 +30,7 @@ export function PublicHeader() {
           <button onClick={() => setOpen((v) => !v)} aria-expanded={open} aria-label={open ? 'Fechar menu' : 'Abrir menu'}>{open ? <X size={21} /> : <Menu size={21} />}</button>
         </div>
       </div>
+      {user && <AccountNavigation />}
       {open && (
         <nav className="border-t border-line bg-surface px-6 py-4 text-sm md:hidden" aria-label="Menu móvel">
           <Link onClick={() => setOpen(false)} className="block py-2" to="/">Início</Link>

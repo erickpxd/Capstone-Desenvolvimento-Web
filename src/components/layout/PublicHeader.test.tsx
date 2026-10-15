@@ -13,8 +13,12 @@ test('apresenta conta autenticada e executa logout no desktop', async () => {
   const signOut = jest.fn().mockResolvedValue(undefined)
   mockedUseAuth.mockReturnValue({ user: { email: 'aluno@example.com' } as never, session: {} as never, isLoading: false, signOut, signIn: jest.fn(), role: 'student', displayName: 'Aluno' })
   render(<ThemeProvider><MemoryRouter initialEntries={['/catalogo']}><Routes><Route path="*" element={<><PublicHeader /><p>Página</p></>} /></Routes></MemoryRouter></ThemeProvider>)
-  expect(screen.getAllByRole('link', { name: /minha conta/i })[0]).toHaveAttribute('href', '/minha-conta')
-  await user.click(screen.getAllByRole('button', { name: /^sair$/i })[0])
+  expect(screen.getByRole('navigation', { name: 'Área do aluno' })).toBeInTheDocument()
+  expect(screen.getByRole('link', { name: 'Meus empréstimos' })).toHaveAttribute('href', '/minha-conta/emprestimos')
+  await user.click(screen.getByRole('button', { name: 'Abrir menu da conta' }))
+  expect(screen.getByRole('menuitem', { name: /meu painel/i })).toHaveAttribute('href', '/minha-conta')
+  expect(screen.getByRole('menuitem', { name: /meu perfil/i })).toHaveAttribute('href', '/minha-conta/perfil')
+  await user.click(screen.getByRole('menuitem', { name: /sair da conta/i }))
   expect(signOut).toHaveBeenCalled()
 })
 
@@ -24,7 +28,25 @@ test('fecha o menu móvel ao navegar e permite logout móvel', async () => {
   mockedUseAuth.mockReturnValue({ user: { email: 'aluno@example.com' } as never, session: {} as never, isLoading: false, signOut, signIn: jest.fn(), role: 'student', displayName: 'Aluno' })
   render(<ThemeProvider><MemoryRouter><PublicHeader /></MemoryRouter></ThemeProvider>)
   await user.click(screen.getByRole('button', { name: 'Abrir menu' }))
-  await user.click(screen.getAllByRole('button', { name: /^sair$/i })[1])
+  await user.click(screen.getByRole('button', { name: /^sair$/i }))
   expect(signOut).toHaveBeenCalled()
   expect(screen.queryByRole('navigation', { name: 'Menu móvel' })).not.toBeInTheDocument()
+})
+
+test('exibe a administração e fecha o menu da conta por teclado e clique externo', async () => {
+  const user = userEvent.setup()
+  mockedUseAuth.mockReturnValue({ user: { email: 'admin@example.com' } as never, session: {} as never, isLoading: false, signOut: jest.fn(), signIn: jest.fn(), role: 'admin', displayName: 'Erick Pessoa' })
+  render(<ThemeProvider><MemoryRouter><PublicHeader /></MemoryRouter></ThemeProvider>)
+
+  const trigger = screen.getByRole('button', { name: 'Abrir menu da conta' })
+  expect(trigger).toHaveTextContent('EP')
+  await user.click(trigger)
+  expect(screen.getByRole('menuitem', { name: /administração/i })).toHaveAttribute('href', '/admin')
+
+  await user.keyboard('{Escape}')
+  expect(screen.queryByRole('menu')).not.toBeInTheDocument()
+
+  await user.click(trigger)
+  await user.click(document.body)
+  expect(screen.queryByRole('menu')).not.toBeInTheDocument()
 })
