@@ -83,15 +83,14 @@ Antes de publicar, execute `npm run test:coverage && npm run build`.
 
 ## Ativação do acervo interno
 
-A migration [supabase/migrations/20261015090000_library_core.sql](supabase/migrations/20261015090000_library_core.sql) cria perfis, obras incorporadas, exemplares, empréstimos, reservas, estados de leitura, desejos, políticas RLS e funções transacionais. Ela não foi aplicada remotamente por este trabalho.
+A migration [supabase/migrations/20261015090000_library_core.sql](supabase/migrations/20261015090000_library_core.sql) cria perfis, obras incorporadas, exemplares, empréstimos, reservas, estados de leitura, desejos, políticas RLS e funções transacionais. Ela foi aplicada ao projeto Supabase `dixbnhisjtsidmrljayh` em 15/10/2026 e consta no histórico remoto.
 
-Após revisão e autorização:
+Para começar a operar o acervo:
 
-1. Execute a migration no projeto Supabase de desenvolvimento.
-2. Confirme as políticas institucionais em `library_settings` (prazo, limite e renovações).
-3. Defina administradores em `app_metadata.role = "admin"` usando ambiente seguro.
-4. Entre em `/admin/acervo`, incorpore uma obra pelo ID `OL...W` da Open Library e cadastre seus exemplares.
-5. Valide empréstimo, reserva, renovação e devolução com duas contas de teste.
+1. Confirme as políticas institucionais em `library_settings` (prazo, limite e renovações).
+2. Defina administradores em `app_metadata.role = "admin"` usando ambiente seguro.
+3. Entre em `/admin/acervo`, incorpore uma obra pelo ID `OL...W` da Open Library e cadastre seus exemplares.
+4. Valide empréstimo, reserva, renovação e devolução com duas contas institucionais de teste.
 
 As funções RPC bloqueiam a cópia durante o empréstimo, respeitam a fila de reservas e evitam dupla circulação. O frontend nunca grava automaticamente todos os resultados da Open Library no acervo.
 
@@ -109,7 +108,7 @@ A popularidade usa `edition_count`/ordenação por número de edições da Open 
 
 ## Limitações conhecidas
 
-- Enquanto a migration não for aplicada, telas internas exibem um aviso honesto e não simulam registros.
+- O acervo começa vazio por segurança; nenhuma obra da Open Library é incorporada automaticamente.
 - Notificação quando um item desejado fica disponível foi retirada do escopo por decisão do projeto.
 - A implantação pública ainda não foi executada.
 - Uma auditoria automatizada WCAG dedicada ainda é recomendada antes da entrega final.

@@ -61,7 +61,7 @@ test('opera empréstimo, reserva, desejo e estado de leitura persistentes', asyn
 })
 
 test('trata esquema ausente, falha comum e estados encerrados', async () => {
-  mockedLoans.mockRejectedValueOnce(new LibrarySchemaUnavailableError()); const missing=renderPage(LoansPage); expect(await screen.findByText(/banco interno não configurado/i)).toBeInTheDocument(); missing.unmount()
+  mockedLoans.mockRejectedValueOnce(new LibrarySchemaUnavailableError()); const missing=renderPage(LoansPage); expect(await screen.findByText(/banco interno indisponível/i)).toBeInTheDocument(); missing.unmount()
   mockedLoans.mockRejectedValueOnce(new Error('falha de consulta')); const failed=renderPage(LoansPage); expect(await screen.findByRole('alert')).toHaveTextContent('falha de consulta'); failed.unmount()
   const book={id:'b1',openLibraryKey:'/works/OL1W',title:'Obra',author:'Autora'}; mockedLoans.mockResolvedValue([{id:'l2',borrowedAt:'2026-01-01',dueAt:'2026-01-10',returnedAt:'2026-01-09',renewals:1,status:'returned',copy:{id:'c1',code:'C-1',book}}]); const returned=renderPage(LoansPage); expect(await screen.findByText(/devolvido em/i)).toBeInTheDocument(); expect(screen.queryByRole('button',{name:'Renovar'})).not.toBeInTheDocument(); returned.unmount()
   mockedReservations.mockResolvedValue([{id:'r2',createdAt:'2026-01-01',status:'cancelled',book}]); const cancelled=renderPage(ReservationsPage); expect(await screen.findByText(/Cancelada/)).toBeInTheDocument(); expect(screen.queryByRole('button',{name:'Cancelar reserva'})).not.toBeInTheDocument(); cancelled.unmount()
