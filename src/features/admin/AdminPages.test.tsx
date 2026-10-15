@@ -55,7 +55,7 @@ test('executa os fluxos administrativos de acervo e circulação', async () => {
 })
 
 test('edita políticas configuráveis da biblioteca', async () => {
-  settings.mockResolvedValue({loanDays:14,maxActiveLoans:3,maxRenewals:1}); const user=userEvent.setup(); renderPage(AdminSettingsPage)
+  settings.mockResolvedValue({loanDays:14,maxActiveLoans:3,maxRenewals:1,defaultCopies:2}); const user=userEvent.setup(); renderPage(AdminSettingsPage)
   const field=await screen.findByLabelText('Prazo (dias)'); await user.clear(field); await user.type(field,'21'); await user.click(screen.getByRole('button',{name:'Salvar políticas'}))
   expect(jest.mocked(updateLibrarySettings).mock.calls[0][0]).toEqual(expect.objectContaining({loanDays:21}))
 })

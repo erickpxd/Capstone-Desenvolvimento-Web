@@ -6,7 +6,7 @@ export interface LibraryBook { id: string; openLibraryKey: string; title: string
 export interface Loan { id: string; borrowedAt: string; dueAt: string; returnedAt?: string; renewals: number; status: 'active' | 'returned'; copy: { id: string; code: string; book: LibraryBook } }
 export interface Reservation { id: string; createdAt: string; status: 'active' | 'fulfilled' | 'cancelled'; book: LibraryBook }
 export interface SavedBook { openLibraryKey: string; title: string; author: string; coverUrl?: string; createdAt?: string; updatedAt?: string; status?: ReadingState }
-export interface LibrarySettings { loanDays: number; maxActiveLoans: number; maxRenewals: number }
+export interface LibrarySettings { loanDays: number; maxActiveLoans: number; maxRenewals: number; defaultCopies: number }
 export interface CopyRecord { id: string; code: string; status: CopyStatus; book: LibraryBook }
 export interface ProfileRecord { userId: string; fullName: string; createdAt: string }
 

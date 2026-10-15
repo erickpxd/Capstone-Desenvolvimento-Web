@@ -6,7 +6,7 @@ Atualizada em 15/10/2026. “Concluído” exige código e evidência verificáv
 |---|---|---|---|
 | RF01 Catálogo | Concluído | `openLibrary.ts`, Home, Catálogo e Detalhes; testes da integração e componentes | Metadados públicos não viram acervo automaticamente. |
 | RF02 Busca/filtros/ordenação | Concluído | `CatalogPage.tsx`, `openLibrary.ts` e testes | Popularidade usa número de edições; autor ordena a página atual. |
-| RF03 Empréstimos/reservas | Em andamento | RPCs transacionais aplicadas no remoto, serviços, telas e testes automatizados | Falta validação ponta a ponta com duas contas institucionais e exemplares reais. |
+| RF03 Empréstimos/reservas | Em andamento | RPCs transacionais aplicadas no remoto; incorporação cria duas cópias configuráveis; serviços, telas e testes automatizados | Falta validação ponta a ponta com duas contas institucionais e exemplares reais. |
 | RF04 Detalhes/leitura | Em andamento | Detalhes, disponibilidade, tabelas e estados persistentes ativos | Falta validação remota com usuário autenticado. |
 | RF05 Desejos (opcional) | Em andamento | Inclusão, remoção, consulta e tabela remota implementadas | Notificação foi explicitamente retirada do escopo; falta validação autenticada. |
 | RF06 Autenticação | Concluído | Supabase Auth, rotas protegidas e testes de fluxos | Administração depende de `app_metadata.role`. |
@@ -20,7 +20,7 @@ Atualizada em 15/10/2026. “Concluído” exige código e evidência verificáv
 
 ## Lacunas externas
 
-- Migration `20261015090000` aplicada e sincronizada no Supabase em 15/10/2026.
+- Migrations `20261015090000` e `20261015120000` aplicadas e sincronizadas no Supabase em 15/10/2026.
 - A instituição precisa confirmar prazo e limites de circulação.
 - É necessário validar os fluxos com contas de estudante e administrador.
 - A implantação pública e sua URL ainda não foram fornecidas/executadas.

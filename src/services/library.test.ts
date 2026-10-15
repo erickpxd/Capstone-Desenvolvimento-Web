@@ -84,12 +84,12 @@ test('persiste estados de leitura e consulta estados salvos', async () => {
 })
 
 test('incorpora obras, adiciona cópias e gerencia políticas', async () => {
-  const bookBuilder=builder({id:'b1'}); const copies=builder(null); const settings=builder({loan_days:14,max_active_loans:3,max_renewals:1})
-  mockedRequire.mockReturnValue({from:jest.fn((table)=>table==='library_books'?bookBuilder:table==='book_copies'?copies:settings)} as never)
+  const copies=builder(null); const settings=builder({loan_days:14,max_active_loans:3,max_renewals:1,default_copy_count:2}); const rpc=jest.fn().mockResolvedValue({data:'b1',error:null})
+  mockedRequire.mockReturnValue({rpc,from:jest.fn((table)=>table==='book_copies'?copies:settings)} as never)
   const book={id:'OL1W',openLibraryKey:'/works/OL1W',title:'Obra',author:'Autora',eyebrow:'A',category:'Ficção',language:'Português',year:2020,availability:'catalog-only' as const,availableCopies:0,totalCopies:0,cover:'generic' as const,coverColor:'#fff',coverInk:'#000'}
   await expect(incorporateBook(book)).resolves.toBe('b1'); await addCopy('b1',' C-1 ')
-  await expect(getLibrarySettings()).resolves.toEqual({loanDays:14,maxActiveLoans:3,maxRenewals:1})
-  await updateLibrarySettings({loanDays:21,maxActiveLoans:4,maxRenewals:2})
+  await expect(getLibrarySettings()).resolves.toEqual({loanDays:14,maxActiveLoans:3,maxRenewals:1,defaultCopies:2})
+  await updateLibrarySettings({loanDays:21,maxActiveLoans:4,maxRenewals:2,defaultCopies:2})
 })
 
 test('propaga erros reais de todas as operações sem mascará-los', async () => {
@@ -120,5 +120,5 @@ test('trata ausência de estados salvos e falhas nas escritas pessoais', async (
   await expect(setWishlist(book,true)).rejects.toThrow('escrita falhou')
   await expect(setWishlist(book,false)).rejects.toThrow('escrita falhou')
   await expect(addCopy('b','C')).rejects.toThrow('escrita falhou')
-  await expect(updateLibrarySettings({loanDays:1,maxActiveLoans:1,maxRenewals:0})).rejects.toThrow('escrita falhou')
+  await expect(updateLibrarySettings({loanDays:1,maxActiveLoans:1,maxRenewals:0,defaultCopies:2})).rejects.toThrow('escrita falhou')
 })

@@ -86,21 +86,21 @@ export async function getSavedState(openLibraryKey: string) {
 }
 
 export async function incorporateBook(book: Book): Promise<string> {
-  const { data, error } = await requireSupabase().from('library_books').upsert({ open_library_key: normalizeKey(book.openLibraryKey ?? book.id), title: book.title, author: book.author, cover_url: book.coverImageUrl ?? null, category: book.category, published_year: book.year ?? null, metadata: { subjects: book.subjects ?? [], language: book.language } }, { onConflict: 'open_library_key' }).select('id').single()
+  const { data, error } = await requireSupabase().rpc('incorporate_library_book', { p_open_library_key: normalizeKey(book.openLibraryKey ?? book.id), p_title: book.title, p_author: book.author, p_cover_url: book.coverImageUrl ?? null, p_category: book.category, p_published_year: book.year ?? null, p_metadata: { subjects: book.subjects ?? [], language: book.language } })
   if (error) fail(error)
-  return data.id
+  return data as string
 }
 
 export async function addCopy(bookId: string, code: string) { const { error } = await requireSupabase().from('book_copies').insert({ book_id: bookId, code: code.trim() }); if (error) fail(error) }
 
 export async function getLibrarySettings(): Promise<LibrarySettings> {
-  const { data, error } = await requireSupabase().from('library_settings').select('loan_days,max_active_loans,max_renewals').eq('id', true).single()
+  const { data, error } = await requireSupabase().from('library_settings').select('loan_days,max_active_loans,max_renewals,default_copy_count').eq('id', true).single()
   if (error) fail(error)
-  return { loanDays: data.loan_days, maxActiveLoans: data.max_active_loans, maxRenewals: data.max_renewals }
+  return { loanDays: data.loan_days, maxActiveLoans: data.max_active_loans, maxRenewals: data.max_renewals, defaultCopies: data.default_copy_count }
 }
 
 export async function updateLibrarySettings(settings: LibrarySettings) {
-  const { error } = await requireSupabase().from('library_settings').update({ loan_days: settings.loanDays, max_active_loans: settings.maxActiveLoans, max_renewals: settings.maxRenewals, updated_at: new Date().toISOString() }).eq('id', true)
+  const { error } = await requireSupabase().from('library_settings').update({ loan_days: settings.loanDays, max_active_loans: settings.maxActiveLoans, max_renewals: settings.maxRenewals, default_copy_count: settings.defaultCopies, updated_at: new Date().toISOString() }).eq('id', true)
   if (error) fail(error)
 }
 

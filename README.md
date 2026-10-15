@@ -87,16 +87,17 @@ A migration [supabase/migrations/20261015090000_library_core.sql](supabase/migra
 
 Para começar a operar o acervo:
 
-1. Confirme as políticas institucionais em `library_settings` (prazo, limite e renovações).
+1. Confirme as políticas institucionais em `library_settings` (prazo, limites, renovações e quantidade inicial de exemplares).
 2. Defina administradores em `app_metadata.role = "admin"` usando ambiente seguro.
 3. Entre em `/admin/acervo`, incorpore uma obra pelo ID `OL...W` da Open Library e cadastre seus exemplares.
 4. Valide empréstimo, reserva, renovação e devolução com duas contas institucionais de teste.
 
-As funções RPC bloqueiam a cópia durante o empréstimo, respeitam a fila de reservas e evitam dupla circulação. O frontend nunca grava automaticamente todos os resultados da Open Library no acervo.
+As funções RPC bloqueiam a cópia durante o empréstimo, respeitam a fila de reservas e evitam dupla circulação. Ao incorporar explicitamente uma obra, o sistema cria duas cópias disponíveis por padrão; esse número é configurável em `library_settings.default_copy_count`. O frontend nunca grava automaticamente todos os resultados da Open Library no acervo.
 
 ## Funcionalidades
 
 - catálogo público, detalhes, paginação, categoria, idioma e ordenação por publicação, autor e popularidade;
+- fallback visual automático quando a Open Library não possui capa ou a imagem externa falha;
 - disponibilidade física consultada separadamente no Supabase;
 - cadastro, login, recuperação, sessão e logout reais;
 - empréstimos, prazos, histórico, renovação, reservas e cancelamento;
