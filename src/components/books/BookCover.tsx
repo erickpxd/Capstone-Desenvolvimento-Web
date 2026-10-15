@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { Book } from '../../types/book'
 
 const art: Partial<Record<Book['cover'], [string, string]>> = {
@@ -9,11 +10,12 @@ const art: Partial<Record<Book['cover'], [string, string]>> = {
 }
 
 export function BookCover({ book, large = false }: { book: Book; large?: boolean }) {
+  const [failedUrl, setFailedUrl] = useState<string | null>(null)
   const images = art[book.cover]
   const dimensions = large ? 'h-[290px] w-[200px]' : 'h-[182px] w-[126px]'
 
-  if (book.coverImageUrl) {
-    return <img src={book.coverImageUrl} alt={`Capa de ${book.title}`} className={`${dimensions} shrink-0 rounded-[3px] object-cover shadow-book`} loading="lazy" />
+  if (book.coverImageUrl && failedUrl !== book.coverImageUrl) {
+    return <img src={book.coverImageUrl} alt={`Capa de ${book.title}`} className={`${dimensions} shrink-0 rounded-[3px] object-cover shadow-book`} loading="lazy" onError={() => setFailedUrl(book.coverImageUrl!)} />
   }
 
   return (

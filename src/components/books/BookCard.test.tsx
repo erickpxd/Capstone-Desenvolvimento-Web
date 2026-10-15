@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import type { Book } from '../../types/book'
 import { BookCard } from './BookCard'
@@ -30,4 +30,11 @@ test('exibe os dados críticos do livro e aponta para os detalhes', () => {
 test('informa quando não existe cópia física', () => {
   render(<MemoryRouter><BookCard book={{ ...book, availability: 'catalog-only', availableCopies: 0, totalCopies: 0 }} /></MemoryRouter>)
   expect(screen.getByText('Sem cópia na universidade')).toBeInTheDocument()
+})
+
+test('substitui uma imagem externa quebrada pela capa visual do sistema', () => {
+  render(<MemoryRouter><BookCard book={{ ...book, coverImageUrl: 'https://covers.openlibrary.org/quebrada.jpg' }} /></MemoryRouter>)
+  fireEvent.error(screen.getByRole('img', { name: `Capa de ${book.title}` }))
+  expect(screen.queryByRole('img', { name: `Capa de ${book.title}` })).not.toBeInTheDocument()
+  expect(screen.getByLabelText(`Capa ilustrativa de ${book.title}`)).toBeInTheDocument()
 })
