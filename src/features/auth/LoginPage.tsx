@@ -3,7 +3,7 @@ import { ArrowRight, Eye, EyeOff, Globe, LockKeyhole, Mail } from 'lucide-react'
 import { FormEvent, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { isSupabaseConfigured } from '../../lib/supabase'
-import { signInWithPassword } from './auth.service'
+import { useAuth } from './AuthContext'
 import { AuthField, AuthIntro, AuthShell } from './AuthShell'
 
 export function LoginPage() {
@@ -11,13 +11,14 @@ export function LoginPage() {
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
+  const { signIn } = useAuth()
   const location = useLocation()
   const requestedPath = (location.state as { returnTo?: string } | null)?.returnTo
   const returnTo = requestedPath?.startsWith('/') && !requestedPath.startsWith('//') ? requestedPath : '/minha-conta'
 
   const login = useMutation({
     mutationFn: async () => {
-      await signInWithPassword({ email, password })
+      await signIn({ email, password })
     },
     onSuccess: () => navigate(returnTo),
   })

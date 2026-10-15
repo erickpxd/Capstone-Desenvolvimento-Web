@@ -9,7 +9,7 @@ import { AccountLayout } from './AccountLayout'
 jest.mock('../auth/AuthContext', () => ({ useAuth: jest.fn() }))
 const mockedUseAuth = jest.mocked(useAuth)
 
-beforeEach(() => mockedUseAuth.mockReturnValue({ user: {} as never, session: {} as never, isLoading: false, signOut: jest.fn().mockResolvedValue(undefined), role: 'student', displayName: 'Ana Martins' }))
+beforeEach(() => mockedUseAuth.mockReturnValue({ user: {} as never, session: {} as never, isLoading: false, signOut: jest.fn().mockResolvedValue(undefined), signIn: jest.fn(), role: 'student', displayName: 'Ana Martins' }))
 
 test('navega pela área do aluno e abre o menu responsivo', async () => {
   const user = userEvent.setup()
@@ -24,7 +24,7 @@ test('navega pela área do aluno e abre o menu responsivo', async () => {
 test('abre a navegação administrativa e encerra a sessão', async () => {
   const user = userEvent.setup()
   const signOut = jest.fn().mockResolvedValue(undefined)
-  mockedUseAuth.mockReturnValue({ user: {} as never, session: {} as never, isLoading: false, signOut, role: 'admin', displayName: 'Admin' })
+  mockedUseAuth.mockReturnValue({ user: {} as never, session: {} as never, isLoading: false, signOut, signIn: jest.fn(), role: 'admin', displayName: 'Admin' })
   render(<ThemeProvider><MemoryRouter initialEntries={['/admin']}><Routes><Route path="/admin" element={<AdminLayout />}><Route index element={<h1>Resumo administrativo</h1>} /></Route><Route path="/" element={<h1>Site público</h1>} /></Routes></MemoryRouter></ThemeProvider>)
   expect(screen.getByRole('heading', { name: 'Resumo administrativo' })).toBeInTheDocument()
   await user.click(screen.getByRole('button', { name: 'Abrir menu' }))

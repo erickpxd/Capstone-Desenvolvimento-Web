@@ -8,7 +8,7 @@ global.fetch = mockedFetch
 
 function authClient(overrides: Record<string, unknown> = {}) {
   return { auth: {
-    signInWithPassword: jest.fn().mockResolvedValue({ error: null }),
+    signInWithPassword: jest.fn().mockResolvedValue({ data: { session: { access_token: 'sessao-login' } }, error: null }),
     signUp: jest.fn().mockResolvedValue({ data: { session: null }, error: null }),
     resetPasswordForEmail: jest.fn().mockResolvedValue({ error: null }),
     updateUser: jest.fn().mockResolvedValue({ error: null }),
@@ -73,4 +73,9 @@ test('propaga erros de login, logout e leitura da sessão', async () => {
 
   mockedRequireSupabase.mockReturnValue(authClient({ getSession: jest.fn().mockResolvedValue({ data: { session: null }, error: new Error('sessão falhou') }) }) as never)
   await expect(authenticatedFetch('/api/privado')).rejects.toThrow('sessão falhou')
+})
+
+test('recusa login sem sessão retornada pelo Supabase', async () => {
+  mockedRequireSupabase.mockReturnValue(authClient({ signInWithPassword: jest.fn().mockResolvedValue({ data: { session: null }, error: null }) }) as never)
+  await expect(signInWithPassword({ email: 'x@example.com', password: 'senha' })).rejects.toThrow('sessão válida')
 })

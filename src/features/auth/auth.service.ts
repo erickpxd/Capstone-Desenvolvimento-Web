@@ -1,3 +1,4 @@
+import type { Session } from '@supabase/supabase-js'
 import { requireSupabase } from '../../lib/supabase'
 
 export interface LoginCredentials {
@@ -9,9 +10,11 @@ export interface SignUpCredentials extends LoginCredentials {
   fullName: string
 }
 
-export async function signInWithPassword(credentials: LoginCredentials): Promise<void> {
-  const { error } = await requireSupabase().auth.signInWithPassword(credentials)
+export async function signInWithPassword(credentials: LoginCredentials): Promise<Session> {
+  const { data, error } = await requireSupabase().auth.signInWithPassword(credentials)
   if (error) throw error
+  if (!data.session) throw new Error('O Supabase não retornou uma sessão válida.')
+  return data.session
 }
 
 export async function signUp({ fullName, email, password }: SignUpCredentials): Promise<{ requiresEmailConfirmation: boolean }> {

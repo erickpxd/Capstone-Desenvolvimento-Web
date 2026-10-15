@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import { Bell, KeyRound, LogOut, Save, ShieldCheck, UserRound } from 'lucide-react'
+import { KeyRound, LogOut, Save, ShieldCheck, UserRound } from 'lucide-react'
 import { type FormEvent, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AccountPageIntro } from '../account/AccountLayout'
@@ -10,7 +10,6 @@ export function AccountPage() {
   const { user, displayName, signOut } = useAuth()
   const navigate = useNavigate()
   const [fullName, setFullName] = useState(displayName)
-  const [notifications, setNotifications] = useState(true)
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const profile = useMutation({ mutationFn: () => updateProfile(fullName) })
@@ -41,7 +40,7 @@ export function AccountPage() {
         </form>
       </section>
       <aside className="space-y-6">
-        <section className="card p-6 shadow-card"><div className="flex items-center gap-3"><Bell className="text-primary" /><h2 className="font-semibold">Preferências</h2></div><label className="mt-5 flex cursor-pointer items-start justify-between gap-4 text-sm"><span><strong className="block">Avisos por e-mail</strong><small className="mt-1 block leading-5 text-muted">Prazos, reservas disponíveis e comunicados da biblioteca.</small></span><input type="checkbox" checked={notifications} onChange={(event) => setNotifications(event.target.checked)} className="mt-1 size-4 accent-blue-600" /></label><p className="mt-5 text-[11px] text-subtle">Preferência salva somente nesta demonstração até a tabela de perfis ser criada.</p></section>
+        <section className="card p-6 shadow-card"><h2 className="font-semibold">Dados da sessão</h2><dl className="mt-5 space-y-4"><ProfileData label="Identificador" value={user?.id} /><ProfileData label="Conta criada" value={formatAuthDate(user?.created_at)} /><ProfileData label="Último acesso" value={formatAuthDate(user?.last_sign_in_at)} /><ProfileData label="E-mail confirmado" value={formatAuthDate(user?.email_confirmed_at)} /></dl><p className="mt-5 text-[11px] text-subtle">Informações fornecidas diretamente pelo Supabase Auth.</p></section>
         <section className="card p-6 shadow-card"><div className="flex items-center gap-3"><ShieldCheck className="text-emerald-600" /><div><h2 className="font-semibold">Conta protegida</h2><p className="mt-1 text-xs text-muted">Sessão autenticada pelo Supabase.</p></div></div>{logout.error && <p role="alert" className="mt-4 text-xs text-red-700">{logout.error.message}</p>}<button className="btn-outline mt-5 w-full" onClick={() => logout.mutate()} disabled={logout.isPending}><LogOut size={17} />{logout.isPending ? 'Saindo…' : 'Sair da conta'}</button></section>
       </aside>
     </div>
@@ -55,3 +54,6 @@ export function AccountPage() {
 function Feedback({ children, success = false }: { children: string; success?: boolean }) {
   return <p role="status" className={`rounded-[10px] p-3 text-xs ${success ? 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200' : 'bg-red-50 text-red-800 dark:bg-red-950 dark:text-red-200'}`}>{children}</p>
 }
+
+function ProfileData({ label, value }: { label: string; value?: string }) { return <div><dt className="text-[10px] uppercase tracking-wide text-subtle">{label}</dt><dd className="mt-1 break-all text-xs font-medium">{value ?? 'Não informado'}</dd></div> }
+function formatAuthDate(value?: string) { return value ? new Intl.DateTimeFormat('pt-BR', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value)) : 'Não informado' }
