@@ -8,7 +8,7 @@ import { AuthenticatedUserMenu } from '../../components/layout/AuthenticatedUser
 
 export function AccountLayout() {
   const [open, setOpen] = useState(false)
-  return <div className="min-h-screen bg-canvas">
+  return <div className="flex min-h-screen flex-col bg-canvas">
     <header className="border-b border-line bg-surface">
       <div className="container-page flex h-[88px] items-center justify-between">
         <Logo />
@@ -18,7 +18,7 @@ export function AccountLayout() {
       <nav className={`${open ? 'flex' : 'hidden'} container-page flex-col border-t border-line py-3 text-sm lg:hidden`}><Link className="py-2" to="/">Início</Link><Link className="py-2" to="/catalogo">Catálogo</Link></nav>
     </header>
     <div className="border-b border-line"><AccountNavigation /></div>
-    <Outlet />
+    <main className="flex-1"><Outlet /></main>
     <footer className="flex min-h-[69px] items-center bg-[#0f172a] text-[11px] text-slate-300"><div className="container-page flex flex-col gap-2 py-6 sm:flex-row sm:justify-between"><span>© 2026 Biblioteca Online</span><span>Privacidade · Acessibilidade · Ajuda</span></div></footer>
   </div>
 }

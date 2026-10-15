@@ -3,5 +3,5 @@ import { Footer } from './Footer'
 import { PublicHeader } from './PublicHeader'
 
 export function PublicLayout() {
-  return <div className="min-h-screen"><PublicHeader /><main><Outlet /></main><Footer /></div>
+  return <div className="flex min-h-screen flex-col"><PublicHeader /><main className="flex-1"><Outlet /></main><Footer /></div>
 }

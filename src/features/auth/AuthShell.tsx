@@ -5,13 +5,13 @@ import { Logo } from '../../components/ui/Logo'
 
 export function AuthShell({ children }: PropsWithChildren) {
   return (
-    <main className="min-h-screen bg-surface">
+    <main className="flex min-h-screen flex-col bg-surface">
       <header className="mx-auto flex h-[88px] max-w-[1360px] items-center justify-between px-6 md:px-10">
         <Logo />
         <Link to="/catalogo" className="hidden items-center gap-2 text-[13px] font-medium text-primary md:flex"><ArrowLeft size={16} />Voltar ao catálogo público</Link>
         <Link to="/catalogo" className="md:hidden" aria-label="Fechar e voltar ao catálogo"><X size={22} /></Link>
       </header>
-      <div className="mx-auto grid max-w-[1360px] gap-12 px-6 pb-12 md:grid-cols-[minmax(0,624px)_minmax(360px,448px)] md:items-center md:justify-center md:px-10">
+      <div className="mx-auto grid w-full max-w-[1360px] flex-1 gap-12 px-6 pb-12 md:grid-cols-[minmax(0,624px)_minmax(360px,448px)] md:items-center md:justify-center md:px-10">
         <aside className="relative hidden h-[816px] overflow-hidden rounded-3xl md:block">
           <img src="/assets/login-library.png" alt="Biblioteca com uma mesa de leitura" className="absolute inset-0 h-full w-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent from-10% to-[#0f172af0]" />
