@@ -38,3 +38,14 @@ test('substitui uma imagem externa quebrada pela capa visual do sistema', () => 
   expect(screen.queryByRole('img', { name: `Capa de ${book.title}` })).not.toBeInTheDocument()
   expect(screen.getByLabelText(`Capa ilustrativa de ${book.title}`)).toBeInTheDocument()
 })
+
+test('mantém títulos longos dentro da capa ilustrativa', () => {
+  const longTitle = 'Pequena bibliografia crítica da literatura brasileira'
+  render(<MemoryRouter><BookCard book={{ ...book, title: longTitle }} /></MemoryRouter>)
+
+  const cover = screen.getByLabelText(`Capa ilustrativa de ${longTitle}`)
+  const title = cover.querySelector('strong')
+
+  expect(title).toHaveClass('overflow-hidden', 'break-words', 'text-[11px]', 'max-h-[58px]')
+  expect(title).toHaveAttribute('title', longTitle)
+})

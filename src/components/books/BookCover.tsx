@@ -13,6 +13,12 @@ export function BookCover({ book, large = false }: { book: Book; large?: boolean
   const [failedUrl, setFailedUrl] = useState<string | null>(null)
   const images = art[book.cover]
   const dimensions = large ? 'h-[290px] w-[200px]' : 'h-[182px] w-[126px]'
+  const titleLength = book.title.trim().length
+  const titleSize = large
+    ? titleLength > 55 ? 'text-[17px]' : titleLength > 34 ? 'text-[21px]' : 'text-[27px]'
+    : titleLength > 45 ? 'text-[11px]' : titleLength > 30 ? 'text-[14px]' : 'text-[18px]'
+  const titleLines = large || titleLength > 45 ? 5 : 4
+  const titleHeight = large ? 'max-h-[142px]' : titleLength > 45 ? 'max-h-[58px]' : 'max-h-[76px]'
 
   if (book.coverImageUrl && failedUrl !== book.coverImageUrl) {
     return <img src={book.coverImageUrl} alt={`Capa de ${book.title}`} className={`${dimensions} shrink-0 rounded-[3px] object-cover shadow-book`} loading="lazy" onError={() => setFailedUrl(book.coverImageUrl!)} />
@@ -29,7 +35,17 @@ export function BookCover({ book, large = false }: { book: Book; large?: boolean
       <span className="relative flex h-[32%] items-center justify-center" aria-hidden="true">
         {images ? <><img src={images[0]} alt="" className="absolute size-[75%]" /><img src={images[1]} alt="" className="absolute size-[55%]" /></> : <Bars type={book.cover} />}
       </span>
-      <strong className={`${large ? 'text-[27px]' : 'text-[18px]'} font-semibold leading-[1.05]`}>{book.title}</strong>
+      <strong
+        className={`${titleSize} ${titleHeight} shrink-0 overflow-hidden break-words font-semibold leading-[1.05]`}
+        style={{
+          display: '-webkit-box',
+          WebkitBoxOrient: 'vertical',
+          WebkitLineClamp: titleLines,
+        }}
+        title={book.title}
+      >
+        {book.title}
+      </strong>
       <span className="text-[5px] uppercase">{book.category}</span>
     </div>
   )
