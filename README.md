@@ -79,9 +79,9 @@ Antes de publicar, execute `npm run test:coverage && npm run build`.
 
 ## Dados e limites desta etapa
 
-O catálogo e os detalhes consultam a Open Library em tempo real. Disponibilidade e exemplares físicos continuam em mocks tipados em `src/mocks/books.ts`, vinculados por `openLibraryKey`; uma obra externa sem vínculo aparece como “Só no catálogo”. Esses domínios permanecem separados e nenhum resultado da Open Library é gravado automaticamente no Supabase.
+Página inicial, catálogo, detalhes e recomendações da área do aluno consultam a Open Library em tempo real. Como o projeto Supabase conectado ainda não possui uma tabela de acervo interno, todas as obras aparecem como “Só no catálogo”, com zero cópias confirmadas. Nenhum resultado da Open Library é gravado automaticamente no Supabase.
 
-As páginas de aluno e administração reproduzem os estados demonstrativos do Figma. Nome, senha, cadastro, recuperação e sessão já usam o Supabase Auth. Empréstimos, reservas, lista de desejos, progresso de leitura, estudantes, exemplares e políticas administrativas ainda não persistem porque as tabelas e regras RLS não foram criadas — nenhuma migration remota foi executada.
+Nome, e-mail, identificador, criação da conta, confirmação e último acesso vêm da sessão real do Supabase Auth. Empréstimos, reservas, desejos, progresso, estudantes, exemplares e relatórios exibem estados vazios enquanto suas tabelas e regras RLS não existirem. O frontend não injeta registros demonstrativos e nenhuma migration remota foi executada.
 
 Para liberar um administrador, defina `app_metadata.role` como `admin` por um ambiente seguro (Edge Function ou servidor com chave privilegiada). Nunca permita que o próprio navegador atribua esse papel. A checagem de rota melhora a experiência, mas a autorização real também deve existir nas políticas RLS.
 

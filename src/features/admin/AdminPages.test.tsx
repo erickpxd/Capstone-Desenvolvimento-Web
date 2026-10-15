@@ -1,37 +1,33 @@
 import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { MemoryRouter } from 'react-router-dom'
+import { useAuth } from '../auth/AuthContext'
 import { AdminDashboardPage, AdminLoansPage, AdminReservationsPage, AdminSettingsPage, CollectionPage, CopiesPage, ReportsPage, StudentAdminProfilePage, StudentsPage } from './AdminPages'
-import { toneForStatus } from './adminData'
+
+jest.mock('../auth/AuthContext', () => ({ useAuth: jest.fn() }))
+const mockedUseAuth = jest.mocked(useAuth)
+
+beforeEach(() => mockedUseAuth.mockReturnValue({ displayName: 'Admin Real', role: 'admin', user: { id: 'auth-1', email: 'admin@example.com', last_sign_in_at: '2026-10-14T12:00:00Z' } as never, session: {} as never, isLoading: false, signIn: jest.fn(), signOut: jest.fn() }))
 
 const pages = [
-  ['Visão geral', AdminDashboardPage], ['Gestão do acervo', CollectionPage], ['Exemplares', CopiesPage], ['Empréstimos', AdminLoansPage], ['Reservas', AdminReservationsPage], ['Estudantes', StudentsPage], ['Ana Martins', StudentAdminProfilePage], ['Relatórios', ReportsPage], ['Configurações', AdminSettingsPage],
+  ['Visão geral', AdminDashboardPage], ['Gestão do acervo', CollectionPage], ['Exemplares', CopiesPage], ['Empréstimos', AdminLoansPage], ['Reservas', AdminReservationsPage], ['Estudantes', StudentsPage], ['Perfil do estudante', StudentAdminProfilePage], ['Relatórios', ReportsPage], ['Configurações', AdminSettingsPage],
 ] as const
 
-test.each(pages)('renderiza a página administrativa %s', (title, Page) => {
-  render(<MemoryRouter><Page /></MemoryRouter>)
+test.each(pages)('renderiza %s sem registros administrativos inventados', (title, Page) => {
+  render(<Page />)
   expect(screen.getByRole('heading', { name: title, level: 1 })).toBeInTheDocument()
-  expect(screen.getByText(/dados demonstrativos/i)).toBeInTheDocument()
-})
-
-test('filtra o acervo e estudantes sem alterar os dados de origem', async () => {
-  const user = userEvent.setup()
-  const { unmount } = render(<MemoryRouter><CollectionPage /></MemoryRouter>)
-  await user.type(screen.getByPlaceholderText(/buscar por título/i), 'Dom Casmurro')
-  expect(screen.getByText('Dom Casmurro')).toBeInTheDocument()
-  expect(screen.queryByText('O Cortiço')).not.toBeInTheDocument()
-  unmount()
-
-  render(<MemoryRouter><StudentsPage /></MemoryRouter>)
-  await user.type(screen.getByPlaceholderText(/buscar nome/i), 'Bruno')
-  expect(screen.getByText('Bruno Lima')).toBeInTheDocument()
+  expect(screen.getByText(/banco interno não configurado/i)).toBeInTheDocument()
   expect(screen.queryByText('Ana Martins')).not.toBeInTheDocument()
 })
 
-test('classifica os estados administrativos', () => {
-  expect(toneForStatus('Disponível')).toBe('success')
-  expect(toneForStatus('Em atraso')).toBe('danger')
-  expect(toneForStatus('Reservado')).toBe('info')
-  expect(toneForStatus('Manutenção')).toBe('warning')
-  expect(toneForStatus('Sem cópias')).toBe('neutral')
+test('mostra somente os dados reais da sessão administrativa', () => {
+  render(<AdminSettingsPage />)
+  expect(screen.getByText('Admin Real')).toBeInTheDocument()
+  expect(screen.getByText('admin@example.com')).toBeInTheDocument()
+  expect(screen.getByText('auth-1')).toBeInTheDocument()
+})
+
+test('não inventa metadados ausentes da sessão', () => {
+  mockedUseAuth.mockReturnValue({ displayName: 'Estudante', role: 'student', user: null, session: null, isLoading: false, signIn: jest.fn(), signOut: jest.fn() })
+  render(<AdminSettingsPage />)
+  expect(screen.getAllByText('Estudante').length).toBeGreaterThan(0)
+  expect(screen.getAllByText('Não informado').length).toBeGreaterThan(0)
 })

@@ -1,4 +1,3 @@
-import { books as internalCatalog } from '../mocks/books'
 import type { Book, CatalogSearchResult } from '../types/book'
 
 const API_URL = 'https://openlibrary.org'
@@ -79,9 +78,8 @@ export async function getOpenLibraryWork(workId: string, signal?: AbortSignal): 
     if (authorResponse.ok) author = ((await authorResponse.json()) as AuthorResponse).name ?? author
   }
 
-  const internal = findInternalBook(work.key)
   return {
-    ...(internal ?? catalogOnlyDefaults),
+    ...catalogOnlyDefaults,
     id,
     openLibraryKey: work.key,
     title: work.title,
@@ -90,7 +88,7 @@ export async function getOpenLibraryWork(workId: string, signal?: AbortSignal): 
     year: parseYear(work.first_publish_date),
     category: work.subjects?.[0] ?? 'Catálogo público',
     language: 'Não informado',
-    cover: internal?.cover ?? 'generic',
+    cover: 'generic',
     coverImageUrl: coverUrl(work.covers?.[0], 'L'),
     description: descriptionText(work.description),
     subjects: work.subjects?.slice(0, 6),
@@ -99,9 +97,8 @@ export async function getOpenLibraryWork(workId: string, signal?: AbortSignal): 
 
 function mapSearchDocument(document: SearchDocument): Book {
   const author = document.author_name?.[0] ?? 'Autor não informado'
-  const internal = findInternalBook(document.key)
   return {
-    ...(internal ?? catalogOnlyDefaults),
+    ...catalogOnlyDefaults,
     id: document.key.replace('/works/', ''),
     openLibraryKey: document.key,
     title: document.title,
@@ -110,7 +107,7 @@ function mapSearchDocument(document: SearchDocument): Book {
     category: preferredSubject(document.subject),
     language: languageName(document.language?.[0]),
     year: document.first_publish_year,
-    cover: internal?.cover ?? 'generic',
+    cover: 'generic',
     coverImageUrl: coverUrl(document.cover_i, 'M'),
     subjects: document.subject?.slice(0, 6),
   }
@@ -120,9 +117,6 @@ const catalogOnlyDefaults: Pick<Book, 'availability' | 'availableCopies' | 'tota
   availability: 'catalog-only', availableCopies: 0, totalCopies: 0, coverColor: '#DCE5EC', coverInk: '#243541',
 }
 
-function findInternalBook(openLibraryKey: string): Book | undefined {
-  return internalCatalog.find((book) => book.openLibraryKey === openLibraryKey)
-}
 function coverUrl(id?: number, size: 'M' | 'L' = 'M') { return id && id > 0 ? `${COVERS_URL}/b/id/${id}-${size}.jpg?default=false` : undefined }
 function preferredSubject(subjects?: string[]) { return subjects?.find((subject) => subject.length <= 32) ?? 'Catálogo público' }
 function languageName(code?: string) { return ({ por: 'Português', eng: 'Inglês', spa: 'Espanhol' } as Record<string, string>)[code ?? ''] ?? 'Não informado' }
