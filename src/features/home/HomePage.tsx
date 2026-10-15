@@ -1,9 +1,11 @@
+import { useQuery } from '@tanstack/react-query'
 import { ArrowRight, BookOpen, CodeXml, FlaskConical, GraduationCap, KeyRound, Landmark, Library, PenTool, Search, Sparkles } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { BookCard } from '../../components/books/BookCard'
 import { BookCover } from '../../components/books/BookCover'
 import { SearchBar } from '../../components/ui/SearchBar'
 import { StatusPill } from '../../components/ui/StatusPill'
+import { getInventories } from '../../services/library'
 import { searchOpenLibraryBooks } from '../../services/openLibrary'
 import type { Book } from '../../types/book'
 
@@ -14,7 +16,8 @@ const categories = [
 
 export function HomePage() {
   const discovery = useQuery({ queryKey: ['open-library', 'home'], queryFn: ({ signal }) => searchOpenLibraryBooks({ query: 'literatura brasileira', language: 'por', pageSize: 8, signal }) })
-  const liveBooks = discovery.data?.books ?? []
+  const inventories=useQuery({queryKey:['library','home-inventories',discovery.data?.books.map((book)=>book.openLibraryKey)],queryFn:()=>getInventories(discovery.data?.books.flatMap((book)=>book.openLibraryKey?[book.openLibraryKey]:[])??[]),enabled:Boolean(discovery.data?.books.length),retry:false})
+  const liveBooks = (discovery.data?.books ?? []).map((book)=>{const item=book.openLibraryKey?inventories.data?.[book.openLibraryKey]:undefined;return item?{...book,totalCopies:item.totalCopies,availableCopies:item.availableCopies,availability:item.availableCopies>0?'available' as const:'borrowed' as const}:book})
   return (
     <>
       <section className="bg-surface py-8 md:py-16">
@@ -42,7 +45,7 @@ export function HomePage() {
           <SectionHeading eyebrow="Curadoria da biblioteca" title="Uma boa leitura muda tudo." action="Ver catálogo" />
           <p className="mt-3 text-sm text-muted">Clássicos e novas perspectivas para a sua próxima descoberta.</p>
           {discovery.isLoading ? <p role="status" className="mt-8 text-sm text-muted">Consultando a Open Library…</p> : discovery.isError ? <p role="alert" className="mt-8 text-sm text-red-700">Não foi possível consultar a Open Library agora.</p> : <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-5">{liveBooks.slice(0, 4).map((b) => <BookCard key={b.id} book={b} dense />)}</div>}
-          <p className="mt-5 text-[10px] text-subtle">Informações bibliográficas consultadas em tempo real na Open Library. O acervo físico ainda não está configurado.</p>
+          <p className="mt-5 text-[10px] text-subtle">Informações bibliográficas consultadas em tempo real na Open Library. A situação física, quando cadastrada, vem exclusivamente do Supabase.</p>
         </div>
       </section>
 
@@ -74,10 +77,9 @@ export function HomePage() {
   )
 }
 
-function FeaturedHero({ book, loading }: { book?: Book; loading: boolean }) { return <div className="relative min-h-[320px] overflow-hidden rounded-2xl bg-slate-900 md:min-h-[460px]"><img src="/assets/library-hero.png" alt="Interior de uma biblioteca universitária" className="absolute inset-0 h-full w-full object-cover" /><div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-900/10" /><div className="absolute inset-x-5 bottom-5 flex items-end gap-4">{book && <BookCover book={book} />}<div className="pb-2 text-white"><span className="text-[9px] uppercase">Open Library</span><h2 className="mt-2 text-2xl font-semibold">{loading ? 'Consultando catálogo…' : book?.title ?? 'Catálogo público'}</h2><p className="mt-1 text-xs text-slate-200">{book?.author ?? 'Descubra sua próxima leitura'}</p>{book && <><div className="mt-3"><StatusPill status="catalog-only" count={0} /></div><Link to={`/livros/${book.id}`} className="mt-4 block text-xs font-semibold">Conhecer o livro →</Link></>}</div></div></div> }
+function FeaturedHero({ book, loading }: { book?: Book; loading: boolean }) { return <div className="relative min-h-[320px] overflow-hidden rounded-2xl bg-slate-900 md:min-h-[460px]"><img src="/assets/library-hero.png" alt="Interior de uma biblioteca universitária" className="absolute inset-0 h-full w-full object-cover" /><div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-900/10" /><div className="absolute inset-x-5 bottom-5 flex items-end gap-4">{book && <BookCover book={book} />}<div className="pb-2 text-white"><span className="text-[9px] uppercase">Open Library</span><h2 className="mt-2 text-2xl font-semibold">{loading ? 'Consultando catálogo…' : book?.title ?? 'Catálogo público'}</h2><p className="mt-1 text-xs text-slate-200">{book?.author ?? 'Descubra sua próxima leitura'}</p>{book && <><div className="mt-3"><StatusPill status={book.availability} count={book.availableCopies} /></div><Link to={`/livros/${book.id}`} className="mt-4 block text-xs font-semibold">Conhecer o livro →</Link></>}</div></div></div> }
 function SourceLine({ icon, title, text }: { icon: React.ReactNode; title: string; text: string }) { return <div className="flex gap-3 text-primary">{icon}<div><strong className="block text-xs text-ink">{title}</strong><span className="mt-1 block text-[10px] text-subtle">{text}</span></div></div> }
 function SectionHeading({ eyebrow, title, action }: { eyebrow: string; title: string; action: string }) { return <div className="flex items-end justify-between gap-4"><div><p className="eyebrow">{eyebrow}</p><h2 className="section-title mt-3">{title}</h2></div><Link className="shrink-0 text-xs font-semibold text-primary" to="/catalogo">{action} →</Link></div> }
 function Step({ n, title, text }: { n: string; title: string; text: string }) { return <div className="card p-6"><span className="text-sm font-semibold text-primary">{n}</span><h3 className="mt-5 font-semibold">{title}</h3><p className="mt-3 text-xs leading-relaxed text-muted">{text}</p></div> }
 function Availability({ status, title, text }: { status: 'available' | 'borrowed' | 'catalog-only'; title: string; text: string }) { return <div className="border-b border-line pb-5"><StatusPill status={status} count={0} long /><h3 className="mt-2 text-sm font-semibold">{title}</h3><p className="mt-1 text-xs text-muted">{text}</p></div> }
 function Faq() { const qs=[['Preciso entrar para pesquisar livros?','Não. O catálogo público pode ser explorado por qualquer pessoa, sem cadastro ou login.'],['Todo livro do catálogo pode ser emprestado?','Não. A Open Library oferece a descoberta bibliográfica. Só os livros com cópias na universidade podem ser solicitados.'],['Como funcionam os empréstimos e as reservas?','Entre com sua conta institucional e consulte o livro. A solicitação depende do vínculo ativo e das regras da biblioteca universitária.']]; return <section className="py-14 md:py-20"><div className="container-page grid gap-9 md:grid-cols-[.75fr_1.25fr]"><div><p className="eyebrow">Antes de começar</p><h2 className="section-title mt-3">Dúvidas, sem complicação.</h2><p className="mt-3 text-sm text-muted">Tudo o que você precisa saber para explorar e usar o acervo universitário.</p></div><div>{qs.map(([q,a])=><details key={q} className="border-b border-line py-5" open={q.startsWith('Preciso')}><summary className="cursor-pointer list-none text-sm font-semibold">{q}</summary><p className="mt-3 text-xs leading-relaxed text-muted">{a}</p></details>)}</div></div></section> }
-import { useQuery } from '@tanstack/react-query'

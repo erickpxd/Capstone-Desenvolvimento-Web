@@ -11,6 +11,7 @@ interface SearchDocument {
   cover_i?: number
   language?: string[]
   subject?: string[]
+  edition_count?: number
 }
 
 interface SearchResponse {
@@ -36,7 +37,7 @@ export interface SearchBooksOptions {
   language?: string
   page?: number
   pageSize?: number
-  sort?: 'relevance' | 'new' | 'old'
+  sort?: 'relevance' | 'new' | 'old' | 'popular' | 'author'
   signal?: AbortSignal
 }
 
@@ -47,19 +48,20 @@ export async function searchOpenLibraryBooks({ query = '', genre = '', language 
 
   const params = new URLSearchParams({
     q: clauses.join(' '),
-    fields: 'key,title,author_name,first_publish_year,cover_i,language,subject',
+    fields: 'key,title,author_name,first_publish_year,cover_i,language,subject,edition_count',
     page: String(page),
     limit: String(pageSize),
     lang: 'pt',
   })
-  if (sort !== 'relevance') params.set('sort', sort)
+  if (sort === 'popular') params.set('sort', 'editions')
+  else if (sort !== 'relevance' && sort !== 'author') params.set('sort', sort)
 
   const response = await fetch(`${API_URL}/search.json?${params}`, { headers: { Accept: 'application/json' }, signal })
   if (!response.ok) throw new Error(`Open Library indisponível (${response.status})`)
   const data = await response.json() as SearchResponse
 
   return {
-    books: data.docs.map(mapSearchDocument),
+    books: data.docs.map(mapSearchDocument).sort(sort === 'author' ? (a, b) => a.author.localeCompare(b.author, 'pt-BR') : undefined),
     total: data.numFound,
     page,
     pageSize,
@@ -107,6 +109,7 @@ function mapSearchDocument(document: SearchDocument): Book {
     category: preferredSubject(document.subject),
     language: languageName(document.language?.[0]),
     year: document.first_publish_year,
+    popularity: document.edition_count,
     cover: 'generic',
     coverImageUrl: coverUrl(document.cover_i, 'M'),
     subjects: document.subject?.slice(0, 6),

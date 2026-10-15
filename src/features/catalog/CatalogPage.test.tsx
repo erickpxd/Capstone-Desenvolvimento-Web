@@ -6,6 +6,8 @@ import { searchOpenLibraryBooks } from '../../services/openLibrary'
 import type { Book } from '../../types/book'
 import { CatalogPage } from './CatalogPage'
 
+jest.mock('../../services/library', () => ({ getInventories: jest.fn().mockResolvedValue({}) }))
+
 jest.mock('../../services/openLibrary', () => ({ searchOpenLibraryBooks: jest.fn() }))
 const mockedSearch = jest.mocked(searchOpenLibraryBooks)
 

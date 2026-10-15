@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { BookCard } from '../../components/books/BookCard'
 import { SearchBar } from '../../components/ui/SearchBar'
+import { getInventories } from '../../services/library'
 import { searchOpenLibraryBooks } from '../../services/openLibrary'
 import type { Availability } from '../../types/book'
 
@@ -17,7 +18,7 @@ export function CatalogPage() {
   const [genre, setGenre] = useState(query && genres.includes(query) ? query : 'Todos os gêneros')
   const [availability, setAvailability] = useState<Availability | 'all'>('all')
   const [language, setLanguage] = useState('')
-  const [sort, setSort] = useState<'relevance' | 'new' | 'old'>('relevance')
+  const [sort, setSort] = useState<'relevance' | 'new' | 'old' | 'author' | 'popular'>('relevance')
   const [filtersOpen, setFiltersOpen] = useState(false)
 
   const catalog = useQuery({
@@ -25,11 +26,16 @@ export function CatalogPage() {
     queryFn: ({ signal }) => searchOpenLibraryBooks({ query, genre: genre === 'Todos os gêneros' ? '' : genre, language, page, pageSize, sort, signal }),
     placeholderData: (previous) => previous,
   })
+  const inventories = useQuery({
+    queryKey: ['library', 'inventories', catalog.data?.books.map((book) => book.openLibraryKey)],
+    queryFn: () => getInventories(catalog.data?.books.flatMap((book) => book.openLibraryKey ? [book.openLibraryKey] : []) ?? []),
+    enabled: Boolean(catalog.data?.books.length), retry: false,
+  })
 
   const visibleBooks = useMemo(() => {
-    const result = catalog.data?.books ?? []
+    const result = (catalog.data?.books ?? []).map((book) => { const inventory=book.openLibraryKey ? inventories.data?.[book.openLibraryKey] : undefined; return inventory ? {...book,totalCopies:inventory.totalCopies,availableCopies:inventory.availableCopies,availability:inventory.availableCopies>0?'available' as const:'borrowed' as const} : book })
     return availability === 'all' ? result : result.filter((book) => book.availability === availability)
-  }, [availability, catalog.data?.books])
+  }, [availability, catalog.data?.books, inventories.data])
   const totalPages = Math.max(1, Math.ceil((catalog.data?.total ?? 0) / pageSize))
 
   function changePage(next: number) {
@@ -48,7 +54,7 @@ export function CatalogPage() {
         <div className="grid items-start gap-8 md:grid-cols-[208px_1fr]">
           <aside className={`${filtersOpen ? 'block' : 'hidden'} card p-5 md:block`}><FilterPanel genre={genre} setGenre={(value) => { setGenre(value); changePage(1) }} availability={availability} setAvailability={setAvailability} language={language} setLanguage={(value) => { setLanguage(value); changePage(1) }} clear={clearFilters} /></aside>
           <div>
-            <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start"><div><h2 className="text-lg font-semibold">Explore o catálogo</h2><p className="mt-1 text-xs text-subtle">{catalog.isLoading ? 'Consultando a Open Library…' : `Exibindo ${visibleBooks.length} de ${(catalog.data?.total ?? 0).toLocaleString('pt-BR')} resultados`}</p></div><label className="relative"><select value={sort} onChange={(event) => { setSort(event.target.value as typeof sort); changePage(1) }} className="h-10 min-w-[220px] appearance-none rounded-lg border border-line bg-surface px-4 pr-9 text-xs text-muted"><option value="relevance">Ordenar por: Relevância</option><option value="new">Mais recentes</option><option value="old">Mais antigos</option></select><ChevronDown size={15} className="pointer-events-none absolute right-3 top-3 text-subtle" /></label></div>
+            <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start"><div><h2 className="text-lg font-semibold">Explore o catálogo</h2><p className="mt-1 text-xs text-subtle">{catalog.isLoading ? 'Consultando a Open Library…' : `Exibindo ${visibleBooks.length} de ${(catalog.data?.total ?? 0).toLocaleString('pt-BR')} resultados`}</p></div><label className="relative"><span className="sr-only">Ordenação</span><select value={sort} onChange={(event) => { setSort(event.target.value as typeof sort); changePage(1) }} className="h-10 min-w-[220px] appearance-none rounded-lg border border-line bg-surface px-4 pr-9 text-xs text-muted"><option value="relevance">Ordenar por: Relevância</option><option value="new">Data: mais recentes</option><option value="old">Data: mais antigos</option><option value="author">Autor (A–Z)</option><option value="popular">Popularidade (edições)</option></select><ChevronDown size={15} className="pointer-events-none absolute right-3 top-3 text-subtle" /></label></div>
             <p className="mt-5 text-[10px] text-subtle">Bibliografia: Open Library <span className="mx-2">·</span> Cópias e situações: universidade</p>
             {catalog.isLoading ? <CatalogSkeleton /> : catalog.isError ? <ErrorState retry={() => catalog.refetch()} /> : visibleBooks.length ? <div className={`mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 lg:gap-5 ${catalog.isFetching ? 'opacity-60' : ''}`}>{visibleBooks.map((book) => <BookCard key={book.id} book={book} dense />)}</div> : <div className="card mt-6 p-10 text-center"><p className="font-semibold">Nenhum livro encontrado</p><p className="mt-2 text-sm text-muted">Tente limpar os filtros ou buscar por outro termo.</p></div>}
             {!catalog.isError && <><div className="mt-9 flex items-center justify-center gap-2 text-xs"><button disabled={page === 1} onClick={() => changePage(page - 1)} aria-label="Página anterior" className="p-2 disabled:opacity-30"><ChevronLeft size={17} /></button>{pageNumbers(page, totalPages).map((number) => <button key={number} onClick={() => changePage(number)} className={`size-9 rounded-lg ${number === page ? 'bg-primary text-white' : 'border border-line bg-surface'}`}>{number}</button>)}<button disabled={page >= totalPages} onClick={() => changePage(page + 1)} aria-label="Próxima página" className="p-2 text-primary disabled:opacity-30"><ChevronRight size={17} /></button></div><p className="mt-4 text-center text-[10px] text-subtle">Página {page} de {totalPages.toLocaleString('pt-BR')}</p></>}

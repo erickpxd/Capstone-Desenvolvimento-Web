@@ -63,3 +63,15 @@ test('mantém autor padrão quando a consulta do autor falha', async () => {
   const book = await getOpenLibraryWork('OL6W')
   expect(book).toMatchObject({ author: 'Autor não informado', year: 1999, description: 'Texto' })
 })
+
+test('ordena autores e usa número de edições como popularidade documentada', async () => {
+  mockedFetch.mockResolvedValue({ ok: true, json: async () => ({ numFound: 2, docs: [
+    { key: '/works/OL8W', title: 'B', author_name: ['Zilda'], edition_count: 4 },
+    { key: '/works/OL7W', title: 'A', author_name: ['Ana'], edition_count: 10 },
+  ] }) })
+  const byAuthor=await searchOpenLibraryBooks({sort:'author'})
+  expect(byAuthor.books.map((book)=>book.author)).toEqual(['Ana','Zilda'])
+  expect(byAuthor.books[0].popularity).toBe(10)
+  await searchOpenLibraryBooks({sort:'popular'})
+  expect(mockedFetch.mock.calls[1][0]).toContain('sort=editions')
+})

@@ -9,6 +9,7 @@ export interface Book {
   category: string
   language: string
   year?: number
+  popularity?: number
   availability: Availability
   availableCopies: number
   totalCopies: number
