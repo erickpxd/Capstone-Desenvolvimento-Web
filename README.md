@@ -1,6 +1,6 @@
 # Biblioteca Online
 
-Base frontend do Capstone universitário, implementada a partir dos frames Desktop, Mobile e UX/UI do Figma.
+SPA do Capstone universitário para explorar o catálogo público e gerenciar o acervo físico. A interface segue os frames Desktop, Mobile e UX/UI do Figma, consulta a Open Library e usa Supabase para autenticação e persistência multiusuário.
 
 ## Executar
 
@@ -9,6 +9,8 @@ npm install
 cp .env.example .env.local
 npm run dev
 ```
+
+O Vite aceita `.env` ou `.env.local`; o repositório ignora ambos. Nunca versione o arquivo preenchido.
 
 Variáveis esperadas:
 
@@ -52,6 +54,8 @@ O catálogo é uma segunda integração REST: `src/services/openLibrary.ts` cons
 ```bash
 npm test
 npm run test:coverage
+npm run typecheck
+npm run build
 ```
 
 A suíte usa Jest e React Testing Library. Ela cobre componentes críticos, o hook de tema, login/logout, envio do token e integração com a Open Library por meio de mocks de `fetch`.
@@ -77,13 +81,42 @@ O `vercel.json` já registra o build, o diretório `dist` e o fallback necessár
 
 Antes de publicar, execute `npm run test:coverage && npm run build`.
 
-## Dados e limites desta etapa
+## Ativação do acervo interno
 
-Página inicial, catálogo, detalhes e recomendações da área do aluno consultam a Open Library em tempo real. Como o projeto Supabase conectado ainda não possui uma tabela de acervo interno, todas as obras aparecem como “Só no catálogo”, com zero cópias confirmadas. Nenhum resultado da Open Library é gravado automaticamente no Supabase.
+A migration [supabase/migrations/20261015090000_library_core.sql](supabase/migrations/20261015090000_library_core.sql) cria perfis, obras incorporadas, exemplares, empréstimos, reservas, estados de leitura, desejos, políticas RLS e funções transacionais. Ela não foi aplicada remotamente por este trabalho.
 
-Nome, e-mail, identificador, criação da conta, confirmação e último acesso vêm da sessão real do Supabase Auth. Empréstimos, reservas, desejos, progresso, estudantes, exemplares e relatórios exibem estados vazios enquanto suas tabelas e regras RLS não existirem. O frontend não injeta registros demonstrativos e nenhuma migration remota foi executada.
+Após revisão e autorização:
+
+1. Execute a migration no projeto Supabase de desenvolvimento.
+2. Confirme as políticas institucionais em `library_settings` (prazo, limite e renovações).
+3. Defina administradores em `app_metadata.role = "admin"` usando ambiente seguro.
+4. Entre em `/admin/acervo`, incorpore uma obra pelo ID `OL...W` da Open Library e cadastre seus exemplares.
+5. Valide empréstimo, reserva, renovação e devolução com duas contas de teste.
+
+As funções RPC bloqueiam a cópia durante o empréstimo, respeitam a fila de reservas e evitam dupla circulação. O frontend nunca grava automaticamente todos os resultados da Open Library no acervo.
+
+## Funcionalidades
+
+- catálogo público, detalhes, paginação, categoria, idioma e ordenação por publicação, autor e popularidade;
+- disponibilidade física consultada separadamente no Supabase;
+- cadastro, login, recuperação, sessão e logout reais;
+- empréstimos, prazos, histórico, renovação, reservas e cancelamento;
+- leitura (`Lendo` e `Concluído`) e lista de desejos persistentes;
+- administração de obras, exemplares, devoluções, fila, estudantes, indicadores e políticas;
+- estados de carregamento, vazio e erro, layout responsivo e navegação por teclado.
+
+A popularidade usa `edition_count`/ordenação por número de edições da Open Library; não é um valor inventado nem representa popularidade dentro da universidade. A ordenação alfabética por autor é aplicada aos resultados da página retornada pela API.
+
+## Limitações conhecidas
+
+- Enquanto a migration não for aplicada, telas internas exibem um aviso honesto e não simulam registros.
+- Notificação quando um item desejado fica disponível foi retirada do escopo por decisão do projeto.
+- A implantação pública ainda não foi executada.
+- Uma auditoria automatizada WCAG dedicada ainda é recomendada antes da entrega final.
 
 Para liberar um administrador, defina `app_metadata.role` como `admin` por um ambiente seguro (Edge Function ou servidor com chave privilegiada). Nunca permita que o próprio navegador atribua esse papel. A checagem de rota melhora a experiência, mas a autorização real também deve existir nas políticas RLS.
+
+Consulte também [requisitos](docs/REQUIREMENTS.md), [arquitetura](docs/ARCHITECTURE.md) e [matriz de conformidade](docs/IMPLEMENTATION_STATUS.md).
 
 ## Tema visual
 

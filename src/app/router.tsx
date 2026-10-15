@@ -12,6 +12,7 @@ import { SignUpPage } from '../features/auth/SignUpPage'
 import { BookDetailsPage } from '../features/books/BookDetailsPage'
 import { CatalogPage } from '../features/catalog/CatalogPage'
 import { HomePage } from '../features/home/HomePage'
+import { NotFoundPage } from '../features/not-found/NotFoundPage'
 
 export const router = createBrowserRouter([
   {
@@ -53,4 +54,5 @@ export const router = createBrowserRouter([
       { path: 'configuracoes', element: <AdminSettingsPage /> },
     ],
   },
+  { path: '*', element: <NotFoundPage /> },
 ])
