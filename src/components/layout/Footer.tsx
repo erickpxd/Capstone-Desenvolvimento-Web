@@ -27,5 +27,5 @@ export function Footer() {
 }
 
 function FooterList({ title, items }: { title: string; items: string[] }) {
-  return <div><h3 className="text-xs font-semibold">{title}</h3><ul className="mt-3 space-y-2 text-[11px] text-slate-300">{items.map((item) => <li key={item}>{item.includes('Catálogo') ? <Link to="/catalogo">{item}</Link> : item}</li>)}</ul></div>
+  return <div><h2 className="text-xs font-semibold">{title}</h2><ul className="mt-3 space-y-2 text-[11px] text-slate-300">{items.map((item) => <li key={item}>{item.includes('Catálogo') ? <Link to="/catalogo">{item}</Link> : item}</li>)}</ul></div>
 }

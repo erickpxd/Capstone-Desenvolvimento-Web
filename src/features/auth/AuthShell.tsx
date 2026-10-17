@@ -5,7 +5,8 @@ import { Logo } from '../../components/ui/Logo'
 
 export function AuthShell({ children }: PropsWithChildren) {
   return (
-    <main className="flex min-h-screen flex-col bg-surface">
+    <main id="conteudo-principal" className="flex min-h-screen flex-col bg-surface">
+      <a href="#formulario-autenticacao" className="fixed left-3 top-3 z-50 -translate-y-20 rounded-lg bg-primary px-4 py-3 font-semibold text-white transition-transform focus:translate-y-0">Pular para o formulário</a>
       <header className="mx-auto flex h-[88px] max-w-[1360px] items-center justify-between px-6 md:px-10">
         <Logo />
         <Link to="/catalogo" className="hidden items-center gap-2 text-[13px] font-medium text-primary md:flex"><ArrowLeft size={16} />Voltar ao catálogo público</Link>
@@ -22,7 +23,7 @@ export function AuthShell({ children }: PropsWithChildren) {
             <p className="mt-[22px] flex items-center gap-2 text-xs text-slate-300"><ShieldCheck size={18} />Área do aluno · acesso protegido</p>
           </div>
         </aside>
-        <section className="mx-auto w-full max-w-[448px] py-5 md:py-12">{children}</section>
+        <section id="formulario-autenticacao" className="mx-auto w-full max-w-[448px] py-5 md:py-12" tabIndex={-1}>{children}</section>
       </div>
       <footer className="mx-auto flex max-w-[1360px] flex-col gap-4 px-6 pb-8 text-[11px] text-subtle md:flex-row md:justify-between md:px-10"><span>© 2026 Biblioteca Online</span><span>Privacidade · Acessibilidade · Ajuda</span></footer>
     </main>
