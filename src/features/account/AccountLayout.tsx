@@ -19,7 +19,7 @@ export function AccountLayout() {
     </header>
     <div className="border-b border-line"><AccountNavigation /></div>
     <main className="flex-1"><Outlet /></main>
-    <footer className="flex min-h-[69px] items-center bg-[#0f172a] text-[11px] text-slate-300"><div className="container-page flex flex-col gap-2 py-6 sm:flex-row sm:justify-between"><span>© 2026 Biblioteca Online</span><span>Privacidade · Acessibilidade · Ajuda</span></div></footer>
+    <footer className="flex min-h-[69px] items-center bg-[#0f172a] text-[11px] text-slate-300"><div className="container-page py-6">© 2026 Biblioteca Online</div></footer>
   </div>
 }
 

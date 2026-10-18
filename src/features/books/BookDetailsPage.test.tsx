@@ -31,7 +31,7 @@ function renderDetails() {
 test('consulta os detalhes na Open Library sem inventar exemplares', async () => {
   const { container } = renderDetails()
   expect(await screen.findByRole('heading', { level: 1, name: 'Dom Casmurro' })).toBeInTheDocument()
-  expect(await screen.findByText(/não há tabela de acervo interno/i)).toBeInTheDocument()
+  expect(await screen.findByText(/disponibilidade não pôde ser consultada/i)).toBeInTheDocument()
   expect(container).toHaveTextContent('0cópias confirmadas')
   expect(mockedWork).toHaveBeenCalled()
   expect(screen.queryByRole('button', { name: /solicitar empréstimo/i })).not.toBeInTheDocument()

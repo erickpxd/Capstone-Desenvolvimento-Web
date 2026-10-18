@@ -25,7 +25,7 @@ export function AuthShell({ children }: PropsWithChildren) {
         </aside>
         <section id="formulario-autenticacao" className="mx-auto w-full max-w-[448px] py-5 md:py-12" tabIndex={-1}>{children}</section>
       </div>
-      <footer className="mx-auto flex max-w-[1360px] flex-col gap-4 px-6 pb-8 text-[11px] text-subtle md:flex-row md:justify-between md:px-10"><span>© 2026 Biblioteca Online</span><span>Privacidade · Acessibilidade · Ajuda</span></footer>
+      <footer className="mx-auto w-full max-w-[1360px] px-6 pb-8 text-[11px] text-subtle md:px-10">© 2026 Biblioteca Online</footer>
     </main>
   )
 }

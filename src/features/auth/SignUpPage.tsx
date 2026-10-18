@@ -39,6 +39,6 @@ export function SignUpPage() {
     </form>
     <p className="mt-6 text-center text-[13px] text-muted">Já tem uma conta? <Link to="/entrar" className="font-semibold text-primary">Entrar</Link></p>
     <div className="mt-5 flex gap-3 rounded-[10px] bg-primary-soft p-4"><Info size={20} className="shrink-0 text-primary" /><div><strong className="text-[13px]">O catálogo continua aberto</strong><p className="mt-1 text-xs leading-[1.55] text-muted">Você não precisa de uma conta para descobrir livros. Empréstimos e reservas são exclusivos do acervo universitário.</p></div></div>
-    <Link to="/catalogo" className="mt-5 block text-[13px] font-semibold text-primary">← Continuar sem login</Link>
+    <Link to="/catalogo" className="mt-5 block text-[13px] font-semibold text-primary">← Voltar ao catálogo</Link>
   </AuthShell>
 }

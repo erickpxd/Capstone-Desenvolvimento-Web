@@ -15,6 +15,8 @@ const mockedUpdatePassword = jest.mocked(updatePassword)
 const mockedUpdateProfile = jest.mocked(updateProfile)
 const withQuery = (children: React.ReactNode) => <QueryClientProvider client={new QueryClient({ defaultOptions: { mutations: { retry: false } } })}>{children}</QueryClientProvider>
 
+beforeEach(() => jest.clearAllMocks())
+
 test('redireciona visitante para login e preserva o destino', () => {
   mockedUseAuth.mockReturnValue({ user: null, session: null, isLoading: false, signOut: jest.fn(), signIn: jest.fn(), role: 'student', displayName: 'Aluno' })
   render(<MemoryRouter initialEntries={['/minha-conta']}><Routes>
@@ -89,6 +91,16 @@ test('valida a nova senha antes de chamar o Supabase', async () => {
   await user.type(screen.getByLabelText(/nova senha/i), 'curta')
   await user.click(screen.getByRole('button', { name: /alterar senha/i }))
   expect(await screen.findByRole('status')).toHaveTextContent('8 caracteres')
+})
+
+test('exige a senha atual antes de alterar a senha', async () => {
+  const user = userEvent.setup()
+  mockedUseAuth.mockReturnValue({ user: { email: 'aluno@example.com' } as never, session: {} as never, isLoading: false, signOut: jest.fn(), signIn: jest.fn(), role: 'student', displayName: 'Aluno' })
+  render(withQuery(<MemoryRouter><AccountPage /></MemoryRouter>))
+  await user.type(screen.getByLabelText(/nova senha/i), 'novaSenha123')
+  await user.click(screen.getByRole('button', { name: /alterar senha/i }))
+  expect(await screen.findByRole('status')).toHaveTextContent('senha atual')
+  expect(mockedSignIn).not.toHaveBeenCalled()
 })
 
 test('recusa alteração de senha quando a sessão não possui e-mail', async () => {

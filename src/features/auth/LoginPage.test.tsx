@@ -48,3 +48,13 @@ test('usa o painel como destino padrão após login', async () => {
   await user.click(screen.getByRole('button', { name: /^entrar$/i }))
   expect(await screen.findByRole('heading', { name: 'Área autenticada' })).toBeInTheDocument()
 })
+
+test('ignora destino externo recebido no estado da navegação', async () => {
+  signIn.mockResolvedValue(undefined)
+  const user = userEvent.setup()
+  renderLogin({ returnTo: '//site-externo.example' })
+  await user.type(screen.getByLabelText(/e-mail institucional/i), 'aluno@universidade.edu.br')
+  await user.type(screen.getByLabelText(/^senha$/i), 'senha-segura')
+  await user.click(screen.getByRole('button', { name: /^entrar$/i }))
+  expect(await screen.findByRole('heading', { name: 'Área autenticada' })).toBeInTheDocument()
+})
