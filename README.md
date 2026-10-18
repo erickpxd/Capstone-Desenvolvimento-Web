@@ -58,7 +58,7 @@ npm run typecheck
 npm run build
 ```
 
-A suíte usa Jest e React Testing Library. Ela cobre componentes críticos, o hook de tema, login/logout, envio do token e integração com a Open Library por meio de mocks de `fetch`.
+A suíte usa Jest, React Testing Library e `jest-axe`. Ela cobre componentes críticos, acessibilidade automatizada, o hook de tema, login/logout, envio do token e integração com a Open Library por meio de mocks de `fetch`.
 
 Componentes cobertos diretamente:
 
@@ -101,7 +101,7 @@ As funções RPC bloqueiam a cópia durante o empréstimo, respeitam a fila de r
 - disponibilidade física consultada separadamente no Supabase;
 - cadastro, login, recuperação, sessão e logout reais;
 - empréstimos, prazos, histórico, renovação, reservas e cancelamento;
-- leitura (`Lendo` e `Concluído`) e lista de desejos persistentes;
+- leitura (`Lendo` e `Concluído`) persistente; lista de desejos disponível como recurso adicional opcional;
 - administração de obras, exemplares, devoluções, fila, estudantes, indicadores e políticas;
 - estados de carregamento, vazio e erro, layout responsivo e navegação por teclado.
 
