@@ -71,6 +71,8 @@ Os testes de integração simulam o Supabase e o `fetch` da Open Library, portan
 
 ## Produção (Vercel)
 
+Aplicação publicada: [capstone-desenvolvimento-web.vercel.app](https://capstone-desenvolvimento-web.vercel.app)
+
 1. Importe o repositório na Vercel.
 2. Selecione a branch `main` como branch de produção e o preset **Vite**.
 3. Cadastre `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY` nas variáveis do projeto.
@@ -111,8 +113,7 @@ A popularidade usa `edition_count`/ordenação por número de edições da Open 
 
 - O acervo começa vazio por segurança; nenhuma obra da Open Library é incorporada automaticamente.
 - Notificação quando um item desejado fica disponível foi retirada do escopo por decisão do projeto.
-- A implantação pública ainda não foi executada.
-- Uma auditoria automatizada WCAG dedicada ainda é recomendada antes da entrega final.
+- Os valores de prazo, limites e renovações devem ser confirmados pela instituição antes do uso operacional.
 
 Para liberar um administrador, defina `app_metadata.role` como `admin` por um ambiente seguro (Edge Function ou servidor com chave privilegiada). Nunca permita que o próprio navegador atribua esse papel. A checagem de rota melhora a experiência, mas a autorização real também deve existir nas políticas RLS.
 
