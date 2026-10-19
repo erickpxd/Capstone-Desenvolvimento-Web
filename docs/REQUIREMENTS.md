@@ -27,4 +27,4 @@ Este documento separa o catálogo bibliográfico público do acervo físico da u
 
 ## Decisões configuráveis
 
-Prazo, limite de empréstimos, limite de renovações e quantidade inicial de exemplares não são regras oficiais do PDF. Seus valores ficam em `library_settings` e podem ser alterados por administrador. Por decisão do projeto, uma obra explicitamente incorporada começa com duas cópias disponíveis; resultados comuns da Open Library continuam fora do acervo interno. Esses valores devem ser validados pela instituição antes da publicação.
+Prazo, limite de empréstimos, limite de renovações e quantidade inicial de exemplares não são regras oficiais do PDF. Seus valores ficam em `library_settings` e podem ser alterados por administrador. No ambiente de demonstração, uma obra incorporada começa com três cópias disponíveis; resultados comuns da Open Library continuam fora do acervo interno. Esses valores devem ser validados pela instituição antes do uso operacional.

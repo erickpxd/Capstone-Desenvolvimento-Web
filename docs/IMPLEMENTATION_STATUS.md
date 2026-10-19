@@ -6,7 +6,7 @@ Atualizada em 18/10/2026. “Concluído” exige código e evidência verificáv
 |---|---|---|---|
 | RF01 Catálogo | Concluído | `openLibrary.ts`, Home, Catálogo e Detalhes; testes da integração e componentes | Metadados públicos não viram acervo automaticamente. |
 | RF02 Busca/filtros/ordenação | Concluído | `CatalogPage.tsx`, `openLibrary.ts` e testes | Popularidade usa número de edições; autor ordena a página atual. |
-| RF03 Empréstimos/reservas | Concluído | RPCs transacionais aplicadas no remoto; incorporação cria cópias configuráveis; serviços, telas e testes automatizados | Empréstimo, renovação, devolução, reserva, cancelamento, fila, prazo e histórico implementados. |
+| RF03 Empréstimos/reservas | Concluído | RPCs transacionais aplicadas no remoto; acervo de demonstração com três cópias por obra; serviços, telas e testes automatizados | Empréstimo, renovação, devolução, reserva, cancelamento, fila, prazo e histórico implementados. |
 | RF04 Detalhes/leitura | Concluído | Detalhes, disponibilidade, tabelas, estados persistentes e testes de integração | Estados `Lendo` e `Concluído` associados ao usuário autenticado. |
 | RF05 Desejos (opcional) | Fora do escopo obrigatório | Inclusão, remoção, consulta e tabela remota já existem como funcionalidade adicional | Não bloqueia a entrega; notificação de disponibilidade não será implementada. |
 | RF06 Autenticação | Concluído | Supabase Auth, rotas protegidas e testes de fluxos | Administração depende de `app_metadata.role`. |

@@ -94,7 +94,7 @@ Para começar a operar o acervo:
 3. Entre em `/admin/acervo`, incorpore uma obra pelo ID `OL...W` da Open Library e cadastre seus exemplares.
 4. Valide empréstimo, reserva, renovação e devolução com duas contas institucionais de teste.
 
-As funções RPC bloqueiam a cópia durante o empréstimo, respeitam a fila de reservas e evitam dupla circulação. Ao incorporar explicitamente uma obra, o sistema cria duas cópias disponíveis por padrão; esse número é configurável em `library_settings.default_copy_count`. O frontend nunca grava automaticamente todos os resultados da Open Library no acervo.
+As funções RPC bloqueiam a cópia durante o empréstimo, respeitam a fila de reservas e evitam dupla circulação. Ao incorporar explicitamente uma obra, o sistema cria três cópias disponíveis por padrão; esse número é configurável em `library_settings.default_copy_count`. A migration de demonstração inclui uma curadoria de obras brasileiras com três exemplares cada. O frontend nunca grava automaticamente todos os resultados da Open Library no acervo.
 
 ## Funcionalidades
 
